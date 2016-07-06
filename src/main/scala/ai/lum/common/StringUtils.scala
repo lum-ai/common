@@ -50,9 +50,15 @@ object StringUtils {
 
     def splitCamelCase: Array[String] = ApacheStringUtils.splitByCharacterTypeCamelCase(str)
 
+    def titleCase: String = WordUtils.capitalizeFully(str)
+
+    def swapCase: String = ApacheStringUtils.swapCase(str)
+
     def abbreviate(maxWidth: Int): String = ApacheStringUtils.abbreviate(str, maxWidth)
 
-    def textwrap(wrapLength: Int): String = WordUtils.wrap(str, wrapLength)
+    def wordWrap(wrapLength: Int): String = WordUtils.wrap(str, wrapLength)
+
+    def distanceTo(str2: String): Int = ApacheStringUtils.getLevenshteinDistance(str, str2)
 
   }
 
