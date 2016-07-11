@@ -28,12 +28,21 @@ import com.typesafe.config._
 
 object ConfigUtils {
 
+  /** Allows to treat a Config object like a Map[A] */
   implicit class ConfigWrapper(val config: Config) extends AnyRef {
 
+    /** Retrieves the value of type A from the Config object.
+      *
+      * Throws ConfigException.Missing if the value is missing.
+      */
     def apply[A: ConfigFieldReader](path: String): A = {
       implicitly[ConfigFieldReader[A]].read(config, path)
     }
 
+    /** Retrieves the value of type A from the Config object.
+      *
+      * Returns None if the value is missing.
+      */
     def get[A: ConfigFieldReader](path: String): Option[A] = {
       try {
         Some(apply[A](path))
@@ -42,12 +51,14 @@ object ConfigUtils {
       }
     }
 
+    /** Returns the value of entrySet converted to scala types */
     def entrySetScala: Set[(String, ConfigValue)] = {
       config.entrySet().asScala.map(e => (e.getKey(), e.getValue())).toSet
     }
 
   }
 
+  /** Reads the value of a Config field according to its type */
   abstract class ConfigFieldReader[A: ClassTag] {
     def read(config: Config, path: String): A
   }
