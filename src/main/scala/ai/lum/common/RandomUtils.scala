@@ -47,6 +47,44 @@ object RandomUtils {
 
 
 
+    def nextUniform(a: Double, b: Double): Double = {
+      random.nextDouble(a, b)
+    }
+
+    def nextGaussian(mu: Double, sigma: Double): Double = {
+      mu + random.nextGaussian() * sigma
+    }
+
+    def nextNormal(mu: Double, sigma: Double): Double = {
+      nextGaussian(mu, sigma)
+    }
+
+    def nextLogNormal(mu: Double, sigma: Double): Double = {
+      Math.exp(nextNormal(mu, sigma))
+    }
+
+    def nextExponential(lambda: Double): Double = {
+      -Math.log(1 - random.nextDouble()) / lambda
+    }
+
+//     def nextTriangular = ???
+//     def nextGamma = ???
+//     def nextBeta = ???
+//     def nextBinomial = ???
+//     def nextPoisson = ???
+
+    def nextPareto(alpha: Double): Double = {
+      val u = 1 - random.nextDouble()
+      1 / Math.pow(u, 1 / alpha)
+    }
+
+    def nextWeibull(alpha: Double, beta: Double): Double = {
+      val u = 1 - random.nextDouble()
+      alpha * Math.pow(-Math.log(u), 1 / beta)
+    }
+
+
+
     def randomString(count: Int): String = {
       RandomStringUtils.random(count, 0, 0, false, false, null, random.self)
     }
