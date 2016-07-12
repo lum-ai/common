@@ -67,12 +67,6 @@ object RandomUtils {
       -Math.log(1 - random.nextDouble()) / lambda
     }
 
-//     def nextTriangular = ???
-//     def nextGamma = ???
-//     def nextBeta = ???
-//     def nextBinomial = ???
-//     def nextPoisson = ???
-
     def nextPareto(alpha: Double): Double = {
       val u = 1 - random.nextDouble()
       1 / Math.pow(u, 1 / alpha)
@@ -123,23 +117,14 @@ object RandomUtils {
 
 
 
-    def randomBinary(count: Int): String = {
-      randomString(count, Array('0', '1'))
+    // TODO implement for LinearSeq (and Stream)
+    // maybe reservoir sampling?
+    def choice[A](seq: IndexedSeq[A]): A = {
+      seq(random.nextInt(seq.length))
     }
-
-    def randomOctal(count: Int): String = {
-      randomString(count, Array('0', '1', '2', '3', '4', '5', '6', '7'))
-    }
-
-    def randomHexadecimal(count: Int): String = {
-      randomString(count, Array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'))
-    }
-
 
     // TODO:
-    // - choice(seq)
     // - sample(population, k)
-    // - useful distributions
 
   }
 
