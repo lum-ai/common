@@ -21,7 +21,7 @@ import org.apache.commons.lang3.RandomStringUtils
 
 object RandomUtils {
 
-  implicit class RandomWrapper(val random: Random) extends AnyRef {
+  implicit class RandomWrapper(val random: Random) extends AnyVal {
 
     def nextBytes(count: Int): Array[Byte] = {
       val result = new Array[Byte](count)
