@@ -17,6 +17,9 @@ scalacOptions ++= Seq(
   "-encoding", "utf8"
 )
 
+// scope scalacOptions to the doc task to configure scaladoc
+scalacOptions in (Compile,doc) += "-no-link-warnings" // suppresses problems with scaladoc @throws links
+
 libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.0",
   "org.apache.commons" % "commons-lang3" % "3.4"
