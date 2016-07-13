@@ -83,6 +83,10 @@ object StringUtils {
     /** Find the edit distance to another String */
     def distanceTo(str2: String): Int = ApacheStringUtils.getLevenshteinDistance(str, str2)
 
+    def center(size: Int): String = ApacheStringUtils.center(str, size)
+    def center(size: Int, padChar: Char): String = ApacheStringUtils.center(str, size, padChar)
+    def center(size: Int, padStr: String): String = ApacheStringUtils.center(str, size, padStr)
+
   }
 
 }
