@@ -87,6 +87,14 @@ object StringUtils {
     def center(size: Int, padChar: Char): String = ApacheStringUtils.center(str, size, padChar)
     def center(size: Int, padStr: String): String = ApacheStringUtils.center(str, size, padStr)
 
+    def leftPad(size: Int): String = ApacheStringUtils.leftPad(str, size)
+    def leftPad(size: Int, padChar: Char): String = ApacheStringUtils.leftPad(str, size, padChar)
+    def leftPad(size: Int, padStr: String): String = ApacheStringUtils.leftPad(str, size, padStr)
+
+    def rightPad(size: Int): String = ApacheStringUtils.rightPad(str, size)
+    def rightPad(size: Int, padChar: Char): String = ApacheStringUtils.rightPad(str, size, padChar)
+    def rightPad(size: Int, padStr: String): String = ApacheStringUtils.rightPad(str, size, padStr)
+
   }
 
 }
