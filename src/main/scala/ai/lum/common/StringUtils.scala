@@ -60,7 +60,7 @@ object StringUtils {
     def unescapeXml: String = StringEscapeUtils.unescapeXml(str)
 
     /** Splits the provided text on whitespace. */
-    def splitOnWhitespace: Array[String] = ApacheStringUtils.splitByWholeSeparatorPreserveAllTokens(str, null)
+    def splitOnWhitespace: Array[String] = ApacheStringUtils.splitByWholeSeparator(str, null)
 
     /** Removes leading and trailing whitespace and replaces sequences of whitespace characters by a single space. */
     def normalizeSpace: String = ApacheStringUtils.normalizeSpace(str)
