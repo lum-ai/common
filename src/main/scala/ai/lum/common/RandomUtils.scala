@@ -23,55 +23,71 @@ object RandomUtils {
 
   implicit class RandomWrapper(val random: Random) extends AnyVal {
 
+    /** Creates an array of random bytes. */
     def nextBytes(count: Int): Array[Byte] = {
       val result = new Array[Byte](count)
       random.nextBytes(result)
       result
     }
 
+    /** Returns a random integer within the specified range. */
     def nextInt(startInclusive: Int, endExclusive: Int): Int = {
       startInclusive + random.nextInt(endExclusive - startInclusive)
     }
 
+    /** Returns a random long within the specified range. */
     def nextLong(startInclusive: Long, endExclusive: Long): Long = {
       random.nextDouble(startInclusive, endExclusive).toLong
     }
 
+    /** Returns a random double within the specified range. */
     def nextDouble(startInclusive: Double, endInclusive: Double): Double = {
       startInclusive + ((endInclusive - startInclusive) * random.nextDouble())
     }
 
+    /** Returns a random float within the specified range. */
     def nextFloat(startInclusive: Float, endInclusive: Float): Float = {
       startInclusive + ((endInclusive - startInclusive) * random.nextFloat())
     }
 
-
-
-    def nextUniform(a: Double, b: Double): Double = {
-      random.nextDouble(a, b)
-    }
-
+    /**
+     * Gaussian distribution. mu is the mean, and sigma is the
+     * standard deviation.
+     */
     def nextGaussian(mu: Double, sigma: Double): Double = {
       mu + random.nextGaussian() * sigma
     }
 
-    def nextNormal(mu: Double, sigma: Double): Double = {
-      nextGaussian(mu, sigma)
-    }
-
+    /**
+     * Log normal distribution. If you take the natural logarithm of this
+     * distribution, you’ll get a normal distribution with mean mu and
+     * standard deviation sigma. mu can have any value, and sigma must be
+     * greater than zero.
+     */
     def nextLogNormal(mu: Double, sigma: Double): Double = {
-      Math.exp(nextNormal(mu, sigma))
+      Math.exp(nextGaussian(mu, sigma))
     }
 
+    /**
+     * Exponential distribution. lambda is 1.0 divided by the desired mean.
+     * It should be nonzero.  Returned values range from 0 to positive
+     * infinity if lambda is positive, and from negative infinity to 0
+     * if lambda is negative.
+     */
     def nextExponential(lambda: Double): Double = {
       -Math.log(1 - random.nextDouble()) / lambda
     }
 
+    /** Pareto distribution. alpha is the shape parameter. */
     def nextPareto(alpha: Double): Double = {
       val u = 1 - random.nextDouble()
       1 / Math.pow(u, 1 / alpha)
     }
 
+    /**
+     * Weibull distribution.
+     * alpha is the scale parameter and beta is the shape parameter.
+     */
     def nextWeibull(alpha: Double, beta: Double): Double = {
       val u = 1 - random.nextDouble()
       alpha * Math.pow(-Math.log(u), 1 / beta)
