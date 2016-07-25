@@ -1,6 +1,6 @@
-name := "common"
+import ReleaseTransformations._
 
-version := "0.0.2-SNAPSHOT"
+name := "common"
 
 organization := "ai.lum"
 
@@ -18,11 +18,28 @@ scalacOptions ++= Seq(
 )
 
 // scope scalacOptions to the doc task to configure scaladoc
-scalacOptions in (Compile,doc) += "-no-link-warnings" // suppresses problems with scaladoc @throws links
+scalacOptions in (Compile, doc) += "-no-link-warnings" // suppresses problems with scaladoc @throws links
 
 libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.0",
   "org.apache.commons" % "commons-lang3" % "3.4"
+)
+
+
+// release steps
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  ReleaseStep(action = Command.process("publishSigned", _)),
+  setNextVersion,
+  commitNextVersion,
+  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  pushChanges
 )
 
 
