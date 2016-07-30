@@ -20,41 +20,41 @@ import java.io._
 
 object SerializationUtils {
 
-  def roundtrip[A](obj: A): A = deserialize(serialize(obj))
+  def roundtrip[A <: Serializable](obj: A): A = deserialize(serialize(obj))
 
-  def serialize[A](obj: A): Array[Byte] = {
+  def serialize[A <: Serializable](obj: A): Array[Byte] = {
     val baos = new ByteArrayOutputStream
     serialize(obj, baos)
     baos.toByteArray
   }
 
-  def serialize[A](obj: A, file: File): Unit = {
+  def serialize[A <: Serializable](obj: A, file: File): Unit = {
     serialize(obj, new FileOutputStream(file))
   }
 
-  def serialize[A](obj: A, filename: String): Unit = {
+  def serialize[A <: Serializable](obj: A, filename: String): Unit = {
     serialize(obj, new FileOutputStream(filename))
   }
 
-  def serialize[A](obj: A, outputStream: OutputStream): Unit = {
+  def serialize[A <: Serializable](obj: A, outputStream: OutputStream): Unit = {
     val oos = new ObjectOutputStream(outputStream)
     oos.writeObject(obj)
     oos.close()
   }
 
-  def deserialize[A](data: Array[Byte]): A = {
+  def deserialize[A <: Serializable](data: Array[Byte]): A = {
     deserialize(new ByteArrayInputStream(data))
   }
 
-  def deserialize[A](file: File): A = {
+  def deserialize[A <: Serializable](file: File): A = {
     deserialize(new FileInputStream(file))
   }
 
-  def deserialize[A](filename: String): A = {
+  def deserialize[A <: Serializable](filename: String): A = {
     deserialize(new FileInputStream(filename))
   }
 
-  def deserialize[A](inputStream: InputStream): A = {
+  def deserialize[A <: Serializable](inputStream: InputStream): A = {
     val classLoader = getClass().getClassLoader()
     val ois = new ClassLoaderObjectInputStream(classLoader, inputStream)
     val obj = ois.readObject().asInstanceOf[A]
