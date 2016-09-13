@@ -18,9 +18,11 @@ package ai.lum.common
 
 import java.io._
 
-object SerializationUtils {
+object Serializer {
 
-  def roundtrip[A <: Serializable](obj: A): A = deserialize(serialize(obj))
+  def roundtrip[A <: Serializable](obj: A): A = {
+    deserialize(serialize(obj))
+  }
 
   def serialize[A <: Serializable](obj: A): Array[Byte] = {
     val baos = new ByteArrayOutputStream
@@ -42,8 +44,8 @@ object SerializationUtils {
     oos.close()
   }
 
-  def deserialize[A <: Serializable](data: Array[Byte]): A = {
-    deserialize(new ByteArrayInputStream(data))
+  def deserialize[A <: Serializable](bytes: Array[Byte]): A = {
+    deserialize(new ByteArrayInputStream(bytes))
   }
 
   def deserialize[A <: Serializable](file: File): A = {
