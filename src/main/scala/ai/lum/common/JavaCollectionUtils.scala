@@ -82,6 +82,11 @@ object JavaCollectionUtils {
     def mkEmptyCollection[A]: CC[A]
   }
 
+  // List defaults to ArrayList
+  implicit object ListMaker extends JavaCollectionMaker[java.util.List] {
+    def mkEmptyCollection[A]: java.util.List[A] = new java.util.ArrayList[A]
+  }
+
   implicit object ArrayListMaker extends JavaCollectionMaker[java.util.ArrayList] {
     def mkEmptyCollection[A]: java.util.ArrayList[A] = new java.util.ArrayList[A]
   }
