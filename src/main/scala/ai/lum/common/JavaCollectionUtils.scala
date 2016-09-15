@@ -44,7 +44,7 @@ object JavaCollectionUtils {
     def foreach(f: A => Unit): Unit = {
       val it = collection.iterator()
       while (it.hasNext()) {
-        f(it.next().asInstanceOf[A])
+        f(it.next())
       }
     }
 
