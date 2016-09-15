@@ -52,7 +52,7 @@ object JavaCollectionUtils {
       val it = collection.iterator()
       val col = maker.mkEmptyCollection[B]
       while (it.hasNext()) {
-        col.add(f(it.next().asInstanceOf[A]))
+        col.add(f(it.next()))
       }
       col
     }
@@ -61,7 +61,7 @@ object JavaCollectionUtils {
       val it = collection.iterator()
       val col = maker.mkEmptyCollection[B]
       while (it.hasNext()) {
-        col.addAll(f(it.next().asInstanceOf[A]))
+        col.addAll(f(it.next()))
       }
       col
     }
@@ -70,7 +70,7 @@ object JavaCollectionUtils {
       val it = collection.iterator()
       val col = maker.mkEmptyCollection[A]
       while (it.hasNext()) {
-        val r = it.next().asInstanceOf[A]
+        val r = it.next()
         if (p(r)) col.add(r)
       }
       col
