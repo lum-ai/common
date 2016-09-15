@@ -70,8 +70,8 @@ object JavaCollectionUtils {
       val it = collection.iterator()
       val col = maker.mkEmptyCollection[A]
       while (it.hasNext()) {
-        val r = it.next()
-        if (p(r)) col.add(r)
+        val x = it.next()
+        if (p(x)) col.add(x)
       }
       col
     }
