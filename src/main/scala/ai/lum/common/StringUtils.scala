@@ -78,8 +78,6 @@ object StringUtils {
      */
     def normalizeSpace: String = ApacheStringUtils.normalizeSpace(str)
 
-    def normalize: String = normalizeSpace.stripAccents.toLowerCase
-
     def splitCamelCase: Array[String] = ApacheStringUtils.splitByCharacterTypeCamelCase(str)
 
     def titleCase: String = WordUtils.capitalizeFully(str)
