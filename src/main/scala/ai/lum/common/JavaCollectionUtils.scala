@@ -18,6 +18,7 @@ package ai.lum.common
 
 import java.util.Collection
 import scala.language.higherKinds
+import scala.collection.mutable.Buffer
 import scala.collection.JavaConverters._
 import scala.collection.mutable.StringBuilder
 
@@ -25,13 +26,31 @@ object JavaCollectionUtils {
 
   implicit class JavaCollectionOps[A, CC[A] <: Collection[A]](val collection: CC[A]) extends AnyVal {
 
+    def toBuffer: Buffer[A] = collection.asScala.toBuffer
+
+    def toIndexedSeq: IndexedSeq[A] = collection.asScala.toIndexedSeq
+
     def toIterable: Iterable[A] = collection.asScala
+
+    def toIterator: Iterator[A] = collection.asScala.toIterator
+
+    def toList: List[A] = collection.asScala.toList
+
+    def toSeq: Seq[A] = collection.asScala.toSeq
+
+    def toSet: Set[A] = collection.asScala.toSet
+
+    def toStream: Stream[A] = collection.asScala.toStream
+
+    def toVector: Vector[A] = collection.asScala.toVector
+
+    def nonEmpty: Boolean = !collection.isEmpty
 
     def mkString: String = mkString("")
 
     def mkString(sep: String): String = {
+      if (collection.isEmpty) return ""
       val it = collection.iterator()
-      if (!it.hasNext()) return ""
       val builder = new StringBuilder
       builder ++= it.next().toString()
       while (it.hasNext()) {
@@ -50,30 +69,34 @@ object JavaCollectionUtils {
 
     def map[B](f: A => B)(implicit maker: JavaCollectionMaker[CC]): CC[B] = {
       val it = collection.iterator()
-      val col = maker.mkEmptyCollection[B]
+      val cc = maker.mkEmptyCollection[B]
       while (it.hasNext()) {
-        col.add(f(it.next()))
+        cc.add(f(it.next()))
       }
-      col
+      cc
     }
 
     def flatMap[B](f: A => CC[B])(implicit maker: JavaCollectionMaker[CC]): CC[B] = {
       val it = collection.iterator()
-      val col = maker.mkEmptyCollection[B]
+      val cc = maker.mkEmptyCollection[B]
       while (it.hasNext()) {
-        col.addAll(f(it.next()))
+        cc.addAll(f(it.next()))
       }
-      col
+      cc
     }
 
     def filter(p: A => Boolean)(implicit maker: JavaCollectionMaker[CC]): CC[A] = {
       val it = collection.iterator()
-      val col = maker.mkEmptyCollection[A]
+      val cc = maker.mkEmptyCollection[A]
       while (it.hasNext()) {
         val x = it.next()
-        if (p(x)) col.add(x)
+        if (p(x)) cc.add(x)
       }
-      col
+      cc
+    }
+
+    def filterNot(p: A => Boolean)(implicit maker: JavaCollectionMaker[CC]): CC[A] = {
+      filter(x => !p(x))
     }
 
   }
@@ -93,6 +116,10 @@ object JavaCollectionUtils {
 
   implicit object LinkedListMaker extends JavaCollectionMaker[java.util.LinkedList] {
     def mkEmptyCollection[A]: java.util.LinkedList[A] = new java.util.LinkedList[A]
+  }
+
+  implicit object VectorMaker extends JavaCollectionMaker[java.util.Vector] {
+    def mkEmptyCollection[A]: java.util.Vector[A] = new java.util.Vector[A]
   }
 
   implicit object StackMaker extends JavaCollectionMaker[java.util.Stack] {
