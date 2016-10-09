@@ -6,16 +6,23 @@ organization := "ai.lum"
 
 scalaVersion := "2.11.8"
 
-scalacOptions ++= Seq(
+val commonScalacOptions = Seq(
   "-feature",
   "-unchecked",
   "-deprecation",
   "-Xlint",
+  "-Yno-adapted-args",
   "-Ywarn-dead-code",
   "-Ywarn-value-discard",
-  "-Ywarn-unused-import",
+  "-Ywarn-unused",
   "-encoding", "utf8"
 )
+
+scalacOptions ++= commonScalacOptions
+scalacOptions += "-Ywarn-unused-import"
+
+// don't use -Ywarn-unused-import in the console
+scalacOptions in (Compile, console) := commonScalacOptions
 
 // scope scalacOptions to the doc task to configure scaladoc
 scalacOptions in (Compile, doc) += "-no-link-warnings" // suppresses problems with scaladoc @throws links
