@@ -24,7 +24,7 @@ import scala.collection.mutable.StringBuilder
 
 object JavaCollectionUtils {
 
-  implicit class JavaCollectionOps[A, CC[A] <: Collection[A]](val collection: CC[A]) extends AnyVal {
+  implicit class JavaCollectionOps[A, CC[X] <: Collection[X]](val collection: CC[A]) extends AnyVal {
 
     def toBuffer: Buffer[A] = collection.asScala.toBuffer
 
