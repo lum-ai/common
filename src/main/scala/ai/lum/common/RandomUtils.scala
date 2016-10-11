@@ -163,7 +163,7 @@ object RandomUtils {
       var i = k
       while (iter.hasNext) {
         val x = iter.next
-        val j = nextInt(0, i)
+        val j = random.nextInt(i)
         if (j < k) buffer(j) = x
         i += 1
       }
