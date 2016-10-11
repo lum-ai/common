@@ -17,6 +17,9 @@
 package ai.lum.common
 
 import scala.util.Random
+import scala.language.higherKinds
+import scala.collection.mutable.ArrayBuffer
+import scala.collection.generic.CanBuildFrom
 import org.apache.commons.lang3.RandomStringUtils
 
 object RandomUtils {
@@ -131,16 +134,41 @@ object RandomUtils {
       RandomStringUtils.random(count, 32, 127, false, false, null, random.self)
     }
 
-
-
-    // TODO implement for LinearSeq (and Stream)
-    // maybe reservoir sampling?
-    def choice[A](seq: IndexedSeq[A]): A = {
-      seq(random.nextInt(seq.length))
+    def choice[A](xs: TraversableOnce[A]): A = {
+      require(xs.nonEmpty, "collection is empty")
+      xs match {
+        case xs: IndexedSeq[A] => xs(random.nextInt(xs.size))
+        case _ => sampleWithoutReplacement(xs, 1).toIterator.next
+      }
     }
 
-    // TODO:
-    // - sample(population, k)
+    def sampleWithReplacement[A, CC[X] <: IndexedSeq[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+      require(k >= 0, "sample size must be non-negative")
+      val n = xs.size
+      val builder = cbf(xs)
+      for (i <- 0 until k) {
+        builder += xs(random.nextInt(n))
+      }
+      builder.result()
+    }
+
+    def sampleWithoutReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+      require(k >= 0, "sample size must be non-negative")
+      val buffer = new ArrayBuffer[A](k)
+      val iter = xs.toIterator
+      for (i <- 0 until k) {
+        if (!iter.hasNext) sys.error("sample size larger than population")
+        buffer += iter.next
+      }
+      var i = k
+      while (iter.hasNext) {
+        val x = iter.next
+        val j = nextInt(0, i)
+        if (j < k) buffer(j) = x
+        i += 1
+      }
+      (cbf(xs) ++= buffer).result()
+    }
 
   }
 
