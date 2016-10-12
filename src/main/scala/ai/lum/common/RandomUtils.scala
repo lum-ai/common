@@ -137,22 +137,42 @@ object RandomUtils {
     def choice[A](xs: TraversableOnce[A]): A = {
       require(xs.nonEmpty, "collection is empty")
       xs match {
-        case xs: IndexedSeq[A] => xs(random.nextInt(xs.size))
+        case indexed: IndexedSeq[A] => indexed(random.nextInt(indexed.size))
         case _ => sampleWithoutReplacement(xs, 1).toIterator.next
       }
     }
 
-    def sampleWithReplacement[A, CC[X] <: IndexedSeq[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+    def sampleWithReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+      require(xs.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
-      val n = xs.size
-      val builder = cbf(xs)
-      for (i <- 0 until k) {
-        builder += xs(random.nextInt(n))
+      xs match {
+        case indexed: IndexedSeq[A] => // if traversable is indexed then generate k random indices
+          val n = indexed.size
+          val builder = cbf(xs)
+          for (i <- 0 until k) {
+            builder += indexed(random.nextInt(n))
+          }
+          builder.result()
+        case _ => // reservoir sampling with replacement
+          val iter = xs.toIterator
+          var x = iter.next // we know the traversable is not empty
+          val buffer = ArrayBuffer.fill(k)(x)
+          var i = 2d
+          while (iter.hasNext) {
+            x = iter.next
+            for (j <- 0 until k) {
+              val r = random.nextDouble()
+              if (r <= 1 / i) buffer(j) = x
+            }
+            i += 1
+          }
+          (cbf(xs) ++= buffer).result()
       }
-      builder.result()
     }
 
+    // reservoir sampling
     def sampleWithoutReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+      require(xs.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
       val buffer = new ArrayBuffer[A](k)
       val iter = xs.toIterator
