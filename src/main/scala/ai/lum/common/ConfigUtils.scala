@@ -32,7 +32,6 @@ object ConfigUtils {
   implicit class ConfigWrapper(val config: Config) extends AnyVal {
 
     /** Retrieves the value of type A from the Config object.
-      *
       * Throws ConfigException.Missing if the value is missing.
       */
     def apply[A: ConfigFieldReader](path: String): A = {
@@ -40,7 +39,6 @@ object ConfigUtils {
     }
 
     /** Retrieves the value of type A from the Config object.
-      *
       * Returns None if the value is missing.
       */
     def get[A: ConfigFieldReader](path: String): Option[A] = {
