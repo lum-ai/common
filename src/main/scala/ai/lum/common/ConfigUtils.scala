@@ -20,10 +20,8 @@ import java.io.File
 import java.time.Duration
 import java.net.{ URI, URL }
 import java.nio.file.{ Path, Paths }
-
 import scala.reflect.ClassTag
 import scala.collection.JavaConverters._
-
 import com.typesafe.config._
 
 object ConfigUtils {
