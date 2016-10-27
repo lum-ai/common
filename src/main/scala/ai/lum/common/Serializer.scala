@@ -17,6 +17,7 @@
 package ai.lum.common
 
 import java.io._
+import org.apache.commons.io.input.ClassLoaderObjectInputStream
 
 object Serializer {
 
