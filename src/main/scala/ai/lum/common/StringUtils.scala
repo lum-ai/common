@@ -97,11 +97,32 @@ object StringUtils {
     /** Find the edit distance to another String */
     def distanceTo(str2: String): Int = ApacheStringUtils.getLevenshteinDistance(str, str2)
 
+    /** Checks if string contains only whitespace.
+     *  Note that we consider the empty string to be whitespace.
+     */
     def isWhitespace: Boolean = ApacheStringUtils.isWhitespace(str)
+
+    /** Checks if the string contains only Unicode letters. */
     def isAlpha: Boolean = ApacheStringUtils.isAlpha(str)
+
+    /** Checks if the string contains only Unicode letters or digits. */
     def isAlphanumeric: Boolean = ApacheStringUtils.isAlphanumeric(str)
+
+    /** Checks if the string contains only Unicode digits. */
     def isNumeric: Boolean = ApacheStringUtils.isNumeric(str)
+
+    /** Checks if string contains only ASCII characters.
+     *  Note that we consider the empty string to be ascii.
+     */
+    def isAscii: Boolean = """^\p{ASCII}*$""".r.findFirstIn(str).isDefined
+
+    /** Checks if the string contains only ASCII printable characters. */
     def isAsciiPrintable: Boolean = ApacheStringUtils.isAsciiPrintable(str)
+
+    /** Checks if string contains only ASCII punctuation characters.
+     *  One of !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+     */
+    def isPunctuation: Boolean = """^\p{Punct}+$""".r.findFirstIn(str).isDefined
 
     def center(size: Int): String = ApacheStringUtils.center(str, size)
     def center(size: Int, padChar: Char): String = ApacheStringUtils.center(str, size, padChar)
