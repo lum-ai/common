@@ -58,7 +58,10 @@ object Serializer {
   }
 
   def deserialize[A <: Serializable](inputStream: InputStream): A = {
-    val classLoader = getClass().getClassLoader()
+    deserialize(inputStream, getClass().getClassLoader())
+  }
+
+  def deserialize[A <: Serializable](inputStream: InputStream, classLoader: ClassLoader): A = {
     val ois = new ClassLoaderObjectInputStream(classLoader, inputStream)
     val obj = ois.readObject().asInstanceOf[A]
     ois.close()
