@@ -49,11 +49,11 @@ object FileUtils {
       file.listFiles(fileFilter)
     }
 
-    def readToString(charset: String): String = IOFileUtils.readFileToString(file, charset)
+    def readString(charset: String): String = IOFileUtils.readFileToString(file, charset)
 
-    def readToString(charset: Charset = null): String = IOFileUtils.readFileToString(file, charset)
+    def readString(charset: Charset = null): String = IOFileUtils.readFileToString(file, charset)
 
-    def readToByteArray(): Array[Byte] = IOFileUtils.readFileToByteArray(file)
+    def readByteArray(): Array[Byte] = IOFileUtils.readFileToByteArray(file)
 
     def writeString(string: String, charset: String): Unit = {
       IOFileUtils.writeStringToFile(file, string, charset)
