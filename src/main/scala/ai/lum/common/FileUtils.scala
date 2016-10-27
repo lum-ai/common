@@ -1,8 +1,9 @@
 package ai.lum.common
 
-import java.io.File
+import java.io.{ File, FileFilter }
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOCase
+import org.apache.commons.io.filefilter.{ RegexFileFilter, WildcardFileFilter }
 
 object FileUtils {
 
@@ -18,6 +19,18 @@ object FileUtils {
     def wildcardMatch(wildcardMatcher: String, caseSensitive: Boolean = true): Boolean = {
       val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
       FilenameUtils.wildcardMatch(file.getPath(), wildcardMatcher, caseSensitivity)
+    }
+
+    def listFilesByRegex(pattern: String, caseSensitive: Boolean = true): Array[File] = {
+      val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
+      val fileFilter: FileFilter = new RegexFileFilter(pattern, caseSensitivity)
+      file.listFiles(fileFilter)
+    }
+
+    def listFilesByWildcard(wildcard: String, caseSensitive: Boolean = true): Array[File] = {
+      val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
+      val fileFilter: FileFilter = new WildcardFileFilter(wildcard, caseSensitivity)
+      file.listFiles(fileFilter)
     }
 
   }
