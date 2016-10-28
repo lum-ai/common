@@ -145,29 +145,32 @@ object RandomUtils {
     def sampleWithReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
       require(xs.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
+      val builder = cbf(xs)
       xs match {
-        case indexed: IndexedSeq[A] => // if traversable is indexed then generate k random indices
+        case indexed: IndexedSeq[A] =>
+          // if traversable is indexed then generate k random indices
           val n = indexed.size
-          val builder = cbf(xs)
           for (i <- 0 until k) {
             builder += indexed(random.nextInt(n))
           }
-          builder.result()
-        case _ => // reservoir sampling with replacement
+        case _ =>
+          // reservoir sampling with replacement
+          // basically, this code does `k` reservoir samples of size 1
           val iter = xs.toIterator
-          var x = iter.next // we know the traversable is not empty
+          var x = iter.next
           val buffer = ArrayBuffer.fill(k)(x)
           var i = 2d
           while (iter.hasNext) {
             x = iter.next
             for (j <- 0 until k) {
               val r = random.nextDouble()
-              if (r <= 1 / i) buffer(j) = x
+              if (r < 1 / i) buffer(j) = x
             }
             i += 1
           }
-          (cbf(xs) ++= buffer).result()
+          builder ++= buffer
       }
+      builder.result()
     }
 
     // reservoir sampling
@@ -176,11 +179,11 @@ object RandomUtils {
       require(k >= 0, "sample size must be non-negative")
       val buffer = new ArrayBuffer[A](k)
       val iter = xs.toIterator
-      for (i <- 0 until k) {
+      for (i <- 1 to k) {
         if (!iter.hasNext) sys.error("sample size larger than population")
         buffer += iter.next
       }
-      var i = k
+      var i = k + 1
       while (iter.hasNext) {
         val x = iter.next
         val j = random.nextInt(i)
