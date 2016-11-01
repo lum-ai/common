@@ -45,12 +45,12 @@ object RandomUtils {
 
     /** Returns a random double within the specified range. */
     def nextDouble(startInclusive: Double, endInclusive: Double): Double = {
-      startInclusive + ((endInclusive - startInclusive) * random.nextDouble())
+      startInclusive + (endInclusive - startInclusive) * random.nextDouble()
     }
 
     /** Returns a random float within the specified range. */
     def nextFloat(startInclusive: Float, endInclusive: Float): Float = {
-      startInclusive + ((endInclusive - startInclusive) * random.nextFloat())
+      startInclusive + (endInclusive - startInclusive) * random.nextFloat()
     }
 
     /**
@@ -139,6 +139,14 @@ object RandomUtils {
       xs match {
         case indexed: IndexedSeq[A] => indexed(random.nextInt(indexed.size))
         case _ => sampleWithoutReplacement(xs, 1).toIterator.next
+      }
+    }
+
+    def sample[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int, withReplacement: Boolean = false)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+      if (withReplacement) {
+        sampleWithReplacement(xs, k)
+      } else {
+        sampleWithoutReplacement(xs, k)
       }
     }
 
