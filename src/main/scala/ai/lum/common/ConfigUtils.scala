@@ -19,6 +19,7 @@ package ai.lum.common
 import java.io.File
 import java.time.Duration
 import java.net.{ URI, URL }
+import java.nio.charset.Charset
 import java.nio.file.{ Path, Paths }
 import scala.reflect.ClassTag
 import scala.collection.JavaConverters._
@@ -110,6 +111,12 @@ object ConfigUtils {
   implicit object FileConfigFieldReader extends ConfigFieldReader[File] {
     def read(config: Config, path: String): File = {
       new File(config.getString(path))
+    }
+  }
+
+  implicit object CharsetConfigFieldReader extends ConfigFieldReader[Charset] {
+    def read(config: Config, path: String): Charset = {
+      Charset.forName(config.getString(path))
     }
   }
 
@@ -206,6 +213,12 @@ object ConfigUtils {
   implicit object FileListConfigFieldReader extends ConfigFieldReader[List[File]] {
     def read(config: Config, path: String): List[File] = {
       config.getStringList(path).asScala.map(new File(_)).toList
+    }
+  }
+
+  implicit object CharsetListConfigFieldReader extends ConfigFieldReader[List[Charset]] {
+    def read(config: Config, path: String): List[Charset] = {
+      config.getStringList(path).asScala.map(Charset.forName).toList
     }
   }
 
