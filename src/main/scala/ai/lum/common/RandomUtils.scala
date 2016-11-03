@@ -150,7 +150,7 @@ object RandomUtils {
       }
     }
 
-    def sampleWithReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+    private def sampleWithReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
       require(xs.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
       val builder = cbf(xs)
@@ -182,7 +182,7 @@ object RandomUtils {
     }
 
     // reservoir sampling
-    def sampleWithoutReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+    private def sampleWithoutReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
       require(xs.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
       val buffer = new ArrayBuffer[A](k)
