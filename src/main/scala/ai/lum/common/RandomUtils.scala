@@ -61,6 +61,8 @@ object RandomUtils {
       mu + random.nextGaussian() * sigma
     }
 
+    def nextNormal(mu: Double, sigma: Double): Double = nextGaussian(mu, sigma)
+
     /**
      * Log normal distribution. If you take the natural logarithm of this
      * distribution, you’ll get a normal distribution with mean mu and
@@ -198,7 +200,9 @@ object RandomUtils {
         if (j < k) buffer(j) = x
         i += 1
       }
-      (cbf(xs) ++= buffer).result()
+      val builder = cbf(xs)
+      builder ++= buffer
+      builder.result()
     }
 
   }
