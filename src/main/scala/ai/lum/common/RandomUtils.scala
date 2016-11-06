@@ -98,6 +98,20 @@ object RandomUtils {
       alpha * Math.pow(-Math.log(u), 1 / beta)
     }
 
+    /**
+     * Triangular distribution.
+     * Continuous distribution bounded by given lower and upper limits,
+     * and having a given mode value in-between.
+     */
+    def nextTriangular(low: Double, high: Double, mode: Double): Double = {
+      val u = random.nextDouble()
+      if (u < (mode - low) / (high - low)) {
+        low + Math.sqrt(u * (high - low) * (mode - low))
+      } else {
+        high - Math.sqrt((1 - u) * (high - low) * (high - mode))
+      }
+    }
+
 
 
     def randomString(count: Int): String = {
