@@ -141,16 +141,35 @@ object StringUtils {
      */
     def isPunctuation: Boolean = """^\p{Punct}+$""".r.findFirstIn(str).isDefined
 
+    /** Centers a String in a larger String of the specified size using the space character (' '). */
     def center(size: Int): String = ApacheStringUtils.center(str, size)
+
+    /** Centers a String in a larger String of the specified size.
+     *  Uses a supplied character as the value to pad the String with.
+     */
     def center(size: Int, padChar: Char): String = ApacheStringUtils.center(str, size, padChar)
+
+    /** Centers a String in a larger String of the specified size.
+     *  Uses a supplied String as the value to pad the String with.
+     */
     def center(size: Int, padStr: String): String = ApacheStringUtils.center(str, size, padStr)
 
+    /** Left pad a String with spaces (' '). The String is padded to the specified size. */
     def leftPad(size: Int): String = ApacheStringUtils.leftPad(str, size)
+
+    /** Left pad a String with a specified character. The String is padded to the specified size. */
     def leftPad(size: Int, padChar: Char): String = ApacheStringUtils.leftPad(str, size, padChar)
+
+    /** Left pad a String with a specified String. The String is padded to the specified size. */
     def leftPad(size: Int, padStr: String): String = ApacheStringUtils.leftPad(str, size, padStr)
 
+    /** Right pad a String with spaces (' '). The String is padded to the specified size. */
     def rightPad(size: Int): String = ApacheStringUtils.rightPad(str, size)
+
+    /** Right pad a String with a specified character. The String is padded to the specified size. */
     def rightPad(size: Int, padChar: Char): String = ApacheStringUtils.rightPad(str, size, padChar)
+
+    /** Right pad a String with a specified String. The String is padded to the specified size. */
     def rightPad(size: Int, padStr: String): String = ApacheStringUtils.rightPad(str, size, padStr)
 
   }
