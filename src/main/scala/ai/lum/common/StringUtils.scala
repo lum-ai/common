@@ -16,9 +16,10 @@
 
 package ai.lum.common
 
+import scala.collection.JavaConverters._
 import org.apache.commons.lang3.{ StringUtils => ApacheStringUtils }
 import org.apache.commons.lang3.StringEscapeUtils
-import org.apache.commons.lang3.text.WordUtils
+import org.apache.commons.lang3.text.{ WordUtils, StrSubstitutor }
 
 object StringUtils {
 
@@ -103,6 +104,15 @@ object StringUtils {
 
     /** Find the edit distance to another String */
     def distanceTo(str2: String): Int = ApacheStringUtils.getLevenshteinDistance(str, str2)
+
+    /** Replaces all the occurrences of variables with their matching values
+     *  from the map.
+     */
+    def replaceVariables(values: Map[String, String]): String = {
+      val sub = new StrSubstitutor(values.asJava)
+      sub.setEnableSubstitutionInVariables(true)
+      sub.replace(str)
+    }
 
     /** Checks if string contains only whitespace.
      *  Note that we consider the empty string to be whitespace.
