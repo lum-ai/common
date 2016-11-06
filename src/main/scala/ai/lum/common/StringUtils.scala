@@ -80,7 +80,11 @@ object StringUtils {
 
     def splitCamelCase: Array[String] = ApacheStringUtils.splitByCharacterTypeCamelCase(str)
 
-    def titleCase: String = WordUtils.capitalizeFully(str)
+    /** Converts all the whitespace separated words in the string into
+     *  capitalized words, that is each word is made up of a titlecase
+     *  character and then a series of lowercase characters.
+     */
+    def capitalizeFully: String = WordUtils.capitalizeFully(str)
 
     /**
      * Swaps the case of a String changing upper and title case to
@@ -90,6 +94,9 @@ object StringUtils {
 
     /** Abbreviates a String using ellipses. */
     def abbreviate(maxWidth: Int): String = ApacheStringUtils.abbreviate(str, maxWidth)
+
+    /** Extracts the initial characters from each word in the String. */
+    def initials: String = WordUtils.initials(str)
 
     /** Wraps a single line of text, identifying words by ' '. */
     def wordWrap(wrapLength: Int): String = WordUtils.wrap(str, wrapLength)
@@ -103,7 +110,7 @@ object StringUtils {
     def isWhitespace: Boolean = ApacheStringUtils.isWhitespace(str)
 
     /** Checks if the string contains only Unicode letters. */
-    def isAlpha: Boolean = ApacheStringUtils.isAlpha(str)
+    def isAlphabetic: Boolean = ApacheStringUtils.isAlpha(str)
 
     /** Checks if the string contains only Unicode letters or digits. */
     def isAlphanumeric: Boolean = ApacheStringUtils.isAlphanumeric(str)
