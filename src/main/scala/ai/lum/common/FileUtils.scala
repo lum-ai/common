@@ -46,9 +46,9 @@ object FileUtils {
     def getExtension(): String = FilenameUtils.getExtension(file.getPath())
 
     /** Checks a file to see if it matches the specified wildcard matcher allowing control over case-sensitivity. */
-    def wildcardMatch(wildcardMatcher: String, caseSensitive: Boolean = true): Boolean = {
+    def wildcardMatch(wildcard: String, caseSensitive: Boolean = true): Boolean = {
       val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
-      FilenameUtils.wildcardMatch(file.getPath(), wildcardMatcher, caseSensitivity)
+      FilenameUtils.wildcardMatch(file.getPath(), wildcard, caseSensitivity)
     }
 
     def listFilesByRegex(pattern: String, caseSensitive: Boolean = true): Array[File] = {
