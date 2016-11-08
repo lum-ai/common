@@ -165,9 +165,7 @@ object RandomUtils {
       }
     }
 
-    def sample[A: ClassTag](xs: Array[A], k: Int): Array[A] = {
-      sample(xs.toSeq, k, withReplacement = false).toArray
-    }
+    def sample[A: ClassTag](xs: Array[A], k: Int): Array[A] = sample(xs, k, false)
 
     def sample[A: ClassTag](xs: Array[A], k: Int, withReplacement: Boolean): Array[A] = {
       sample(xs.toSeq, k, withReplacement).toArray
