@@ -18,6 +18,7 @@ package ai.lum.common
 
 import java.io.{ File, FileFilter }
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets.UTF_8
 import org.apache.commons.io.{ FileUtils => IOFileUtils, FilenameUtils, IOCase }
 import org.apache.commons.io.filefilter.{ RegexFileFilter, WildcardFileFilter }
 
@@ -51,7 +52,7 @@ object FileUtils {
 
     def readString(charset: String): String = IOFileUtils.readFileToString(file, charset)
 
-    def readString(charset: Charset = null): String = IOFileUtils.readFileToString(file, charset)
+    def readString(charset: Charset = UTF_8): String = IOFileUtils.readFileToString(file, charset)
 
     def readByteArray(): Array[Byte] = IOFileUtils.readFileToByteArray(file)
 
@@ -67,7 +68,7 @@ object FileUtils {
       IOFileUtils.writeStringToFile(file, string, charset)
     }
 
-    def writeString(string: String, charset: Charset = null, append: Boolean = false): Unit = {
+    def writeString(string: String, charset: Charset = UTF_8, append: Boolean = false): Unit = {
       IOFileUtils.writeStringToFile(file, string, charset, append)
     }
 
