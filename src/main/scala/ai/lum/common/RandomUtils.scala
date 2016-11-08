@@ -17,6 +17,7 @@
 package ai.lum.common
 
 import scala.util.Random
+import scala.reflect.ClassTag
 import scala.language.higherKinds
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.generic.CanBuildFrom
@@ -150,12 +151,26 @@ object RandomUtils {
       RandomStringUtils.random(count, 32, 127, false, false, null, random.self)
     }
 
+    def shuffleArray[A: ClassTag](xs: Array[A]): Array[A] = {
+      random.shuffle(xs.toSeq).toArray
+    }
+
+    def choice[A: ClassTag](xs: Array[A]): A = choice(xs.toSeq)
+
     def choice[A](xs: TraversableOnce[A]): A = {
       require(xs.nonEmpty, "collection is empty")
       xs match {
         case indexed: IndexedSeq[A] => indexed(random.nextInt(indexed.size))
         case _ => sampleWithoutReplacement(xs, 1).toIterator.next
       }
+    }
+
+    def sample[A: ClassTag](xs: Array[A], k: Int): Array[A] = {
+      sample(xs.toSeq, k, withReplacement = false).toArray
+    }
+
+    def sample[A: ClassTag](xs: Array[A], k: Int, withReplacement: Boolean): Array[A] = {
+      sample(xs.toSeq, k, withReplacement).toArray
     }
 
     def sample[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int, withReplacement: Boolean = false)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
