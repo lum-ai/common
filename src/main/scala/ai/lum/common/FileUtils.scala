@@ -18,24 +18,10 @@ package ai.lum.common
 
 import java.io.{ File, FileFilter }
 import java.nio.charset.Charset
-import java.nio.charset.{ StandardCharsets => JavaStandardCharsets }
 import org.apache.commons.io.{ FileUtils => IOFileUtils, FilenameUtils, IOCase }
 import org.apache.commons.io.filefilter.{ RegexFileFilter, WildcardFileFilter }
 
 object FileUtils {
-
-  /** Constant definitions for the standard Charsets.
-   *  These charsets are guaranteed to be available
-   *  on every implementation of the Java platform.
-   */
-  object StandardCharsets {
-    val US_ASCII   = JavaStandardCharsets.US_ASCII
-    val ISO_8859_1 = JavaStandardCharsets.ISO_8859_1
-    val UTF_8      = JavaStandardCharsets.UTF_8
-    val UTF_16     = JavaStandardCharsets.UTF_16
-    val UTF_16BE   = JavaStandardCharsets.UTF_16BE
-    val UTF_16LE   = JavaStandardCharsets.UTF_16LE
-  }
 
   implicit class FileWrapper(val file: File) extends AnyVal {
 
