@@ -24,6 +24,75 @@ import scala.collection.mutable.StringBuilder
 
 object JavaCollectionUtils {
 
+
+
+  trait JavaCollectionMaker[CC[X] <: Collection[X]] {
+    def mkEmptyCollection[A]: CC[A]
+  }
+
+  // List defaults to ArrayList
+  implicit object ListMaker extends JavaCollectionMaker[java.util.List] {
+    def mkEmptyCollection[A]: java.util.List[A] = new java.util.ArrayList[A]
+  }
+
+  implicit object ArrayListMaker extends JavaCollectionMaker[java.util.ArrayList] {
+    def mkEmptyCollection[A]: java.util.ArrayList[A] = new java.util.ArrayList[A]
+  }
+
+  implicit object LinkedListMaker extends JavaCollectionMaker[java.util.LinkedList] {
+    def mkEmptyCollection[A]: java.util.LinkedList[A] = new java.util.LinkedList[A]
+  }
+
+  implicit object VectorMaker extends JavaCollectionMaker[java.util.Vector] {
+    def mkEmptyCollection[A]: java.util.Vector[A] = new java.util.Vector[A]
+  }
+
+  implicit object StackMaker extends JavaCollectionMaker[java.util.Stack] {
+    def mkEmptyCollection[A]: java.util.Stack[A] = new java.util.Stack[A]
+  }
+
+  // Set defaults to HashSet
+  implicit object SetMaker extends JavaCollectionMaker[java.util.Set] {
+    def mkEmptyCollection[A]: java.util.Set[A] = new java.util.HashSet[A]
+  }
+
+  implicit object HashSetMaker extends JavaCollectionMaker[java.util.HashSet] {
+    def mkEmptyCollection[A]: java.util.HashSet[A] = new java.util.HashSet[A]
+  }
+
+  implicit object LinkedHashSetMaker extends JavaCollectionMaker[java.util.LinkedHashSet] {
+    def mkEmptyCollection[A]: java.util.LinkedHashSet[A] = new java.util.LinkedHashSet[A]
+  }
+
+  implicit object TreeSetMaker extends JavaCollectionMaker[java.util.TreeSet] {
+    def mkEmptyCollection[A]: java.util.TreeSet[A] = new java.util.TreeSet[A]
+  }
+
+
+
+  trait JavaMapMaker[M[X, Y] <: java.util.Map[X, Y]] {
+    def mkEmptyMap[K, V]: M[K, V]
+  }
+
+  // Map defaults to HashMap
+  implicit object MapMaker extends JavaMapMaker[java.util.Map] {
+    def mkEmptyMap[K, V]: java.util.Map[K, V] = new java.util.HashMap[K, V]
+  }
+
+  implicit object HashMapMaker extends JavaMapMaker[java.util.HashMap] {
+    def mkEmptyMap[K, V]: java.util.HashMap[K, V] = new java.util.HashMap[K, V]
+  }
+
+  implicit object LinkedHashMapMaker extends JavaMapMaker[java.util.LinkedHashMap] {
+    def mkEmptyMap[K, V]: java.util.LinkedHashMap[K, V] = new java.util.LinkedHashMap[K, V]
+  }
+
+  implicit object TreeMapMaker extends JavaMapMaker[java.util.TreeMap] {
+    def mkEmptyMap[K, V]: java.util.TreeMap[K, V] = new java.util.TreeMap[K, V]
+  }
+
+
+
   implicit class JavaCollectionOps[A, CC[X] <: Collection[X]](val collection: CC[A]) extends AnyVal {
 
     def toBuffer: Buffer[A] = collection.asScala.toBuffer
@@ -101,29 +170,61 @@ object JavaCollectionUtils {
 
   }
 
-  trait JavaCollectionMaker[CC[_] <: Collection[_]] {
-    def mkEmptyCollection[A]: CC[A]
-  }
 
-  // List defaults to ArrayList
-  implicit object ListMaker extends JavaCollectionMaker[java.util.List] {
-    def mkEmptyCollection[A]: java.util.List[A] = new java.util.ArrayList[A]
-  }
 
-  implicit object ArrayListMaker extends JavaCollectionMaker[java.util.ArrayList] {
-    def mkEmptyCollection[A]: java.util.ArrayList[A] = new java.util.ArrayList[A]
-  }
+  implicit class JavaMapWrapper[K, V, M[X, Y] <: java.util.Map[X, Y]](val map: M[K, V]) extends AnyVal {
 
-  implicit object LinkedListMaker extends JavaCollectionMaker[java.util.LinkedList] {
-    def mkEmptyCollection[A]: java.util.LinkedList[A] = new java.util.LinkedList[A]
-  }
+    def toMap: Map[K, V] = map.asScala.toMap
 
-  implicit object VectorMaker extends JavaCollectionMaker[java.util.Vector] {
-    def mkEmptyCollection[A]: java.util.Vector[A] = new java.util.Vector[A]
-  }
+    def nonEmpty: Boolean = !map.isEmpty
 
-  implicit object StackMaker extends JavaCollectionMaker[java.util.Stack] {
-    def mkEmptyCollection[A]: java.util.Stack[A] = new java.util.Stack[A]
+    def mkString: String = mkString("")
+
+    def mkString(sep: String): String = {
+      map.entrySet().map(e => s"${e.getKey()} -> ${e.getValue()}").mkString(sep)
+    }
+
+    def foreach(f: ((K, V)) => Unit): Unit = {
+      for (e <- map.entrySet()) {
+        f((e.getKey(), e.getValue()))
+      }
+    }
+
+    def map[A, B](f: ((K, V)) => (A, B))(implicit maker: JavaMapMaker[M]): M[A, B] = {
+      val m = maker.mkEmptyMap[A, B]
+      for (e <- map.entrySet()) {
+        val (k, v) = f((e.getKey(), e.getValue()))
+        m.put(k, v)
+        ()
+      }
+      m
+    }
+
+    def flatMap[A, B](f: ((K, V)) => M[A, B])(implicit maker: JavaMapMaker[M]): M[A, B] = {
+      val m = maker.mkEmptyMap[A, B]
+      for (e <- map.entrySet()) {
+        m.putAll(f((e.getKey(), e.getValue())))
+      }
+      m
+    }
+
+    def filter(p: ((K, V)) => Boolean)(implicit maker: JavaMapMaker[M]): M[K, V] = {
+      val m = maker.mkEmptyMap[K, V]
+      for (e <- map.entrySet()) {
+        val k = e.getKey()
+        val v = e.getValue()
+        if (p((k, v))) {
+          m.put(k, v)
+          ()
+        }
+      }
+      m
+    }
+
+    def filterNot(p: ((K, V)) => Boolean)(implicit maker: JavaMapMaker[M]): M[K, V] = {
+      filter(e => !p(e))
+    }
+
   }
 
 }
