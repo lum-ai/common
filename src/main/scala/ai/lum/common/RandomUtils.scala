@@ -155,7 +155,7 @@ object RandomUtils {
       random.shuffle(xs.toSeq).toArray
     }
 
-    def choice[A: ClassTag](xs: Array[A]): A = choice(xs.toSeq)
+    def choice[A](xs: Array[A]): A = choice(xs.toSeq)
 
     def choice[A](xs: TraversableOnce[A]): A = {
       require(xs.nonEmpty, "collection is empty")
