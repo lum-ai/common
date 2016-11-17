@@ -6,8 +6,8 @@ import scala.collection.parallel.{ ParSeq, TaskSupport, defaultTaskSupport }
 object IteratorUtils {
 
   implicit class IteratorWrapper[A](val iterator: Iterator[A]) extends AnyVal {
-    def par: ParIterator[A] = parGroups(1024) // is there a better number?
-    def parGroups(n: Int): ParIterator[A] = new ParIterator(iterator.grouped(n))
+    def par: ParIterator[A] = par(100)
+    def par(n: Int): ParIterator[A] = new ParIterator(iterator.grouped(n))
   }
 
   // Gets an iterator of groups of A.
