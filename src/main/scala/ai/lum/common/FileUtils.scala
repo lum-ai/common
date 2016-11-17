@@ -20,7 +20,7 @@ import java.io.{ File, FileFilter }
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets.UTF_8
 import org.apache.commons.io.{ FileUtils => IOFileUtils, FilenameUtils, IOCase }
-import org.apache.commons.io.filefilter.{ RegexFileFilter, WildcardFileFilter }
+import org.apache.commons.io.filefilter._
 
 object FileUtils {
 
@@ -38,16 +38,34 @@ object FileUtils {
       FilenameUtils.wildcardMatch(file.getPath(), wildcard, caseSensitivity)
     }
 
-    def listFilesByRegex(pattern: String, caseSensitive: Boolean = true): Array[File] = {
-      val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
-      val fileFilter: FileFilter = new RegexFileFilter(pattern, caseSensitivity)
-      file.listFiles(fileFilter)
+    private def walkFiles(fileFilter: IOFileFilter, dirFilter: IOFileFilter): Iterator[File] = {
+      val effectiveFileFilter = FileFilterUtils.and(fileFilter, FileFilterUtils.notFileFilter(DirectoryFileFilter.INSTANCE))
+      val effectiveDirFilter = FileFilterUtils.and(dirFilter, DirectoryFileFilter.INSTANCE)
+      val filter: FileFilter = FileFilterUtils.or(effectiveFileFilter, effectiveDirFilter)
+
+      def dirWalker(f: File): Iterator[File] = {
+        if (f.isDirectory) {
+          f.listFiles(filter).toIterator.flatMap(dirWalker)
+        } else {
+          Iterator(f)
+        }
+      }
+
+      dirWalker(file)
     }
 
-    def listFilesByWildcard(wildcard: String, caseSensitive: Boolean = true): Array[File] = {
+    def listFilesByRegex(pattern: String, caseSensitive: Boolean = true, recursive: Boolean = false): Iterator[File] = {
       val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
-      val fileFilter: FileFilter = new WildcardFileFilter(wildcard, caseSensitivity)
-      file.listFiles(fileFilter)
+      val fileFilter = new RegexFileFilter(pattern, caseSensitivity)
+      val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
+      walkFiles(fileFilter, dirFilter)
+    }
+
+    def listFilesByWildcard(wildcard: String, caseSensitive: Boolean = true, recursive: Boolean = false): Iterator[File] = {
+      val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
+      val fileFilter = new WildcardFileFilter(wildcard, caseSensitivity)
+      val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
+      walkFiles(fileFilter, dirFilter)
     }
 
     def touch(): Unit = IOFileUtils.touch(file)
