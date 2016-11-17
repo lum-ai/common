@@ -39,6 +39,9 @@ object IteratorUtils {
       def hasNext: Boolean = self.hasNext
     }
 
+    // returns parallel version of this iterator
+    def par: ParIterator[A] = this
+
     // parallelizes a single group and attaches tasksupport
     private def mkPar(group: Seq[A]): ParSeq[A] = {
       val par = group.par
