@@ -59,19 +59,22 @@ object IteratorUtils {
     }
 
     override def map[B](f: A => B): Iterator[B] = {
-      val parIter = new ParIterator(allGroups.map(g => mkPar(g).map(f).seq))
+      val iter = allGroups.map(g => mkPar(g).map(f).seq)
+      val parIter = new ParIterator(iter)
       parIter.tasksupport = tasksupport
       parIter
     }
 
     override def flatMap[B](f: A => GenTraversableOnce[B]): Iterator[B] = {
-      val parIter = new ParIterator(allGroups.map(g => mkPar(g).flatMap(f).seq))
+      val iter = allGroups.map(g => mkPar(g).flatMap(f).seq).filter(_.nonEmpty)
+      val parIter = new ParIterator(iter)
       parIter.tasksupport = tasksupport
       parIter
     }
 
     override def filter(p: A => Boolean): Iterator[A] = {
-      val parIter = new ParIterator(allGroups.map(g => mkPar(g).filter(p).seq))
+      val iter = allGroups.map(g => mkPar(g).filter(p).seq).filter(_.nonEmpty)
+      val parIter = new ParIterator(iter)
       parIter.tasksupport = tasksupport
       parIter
     }
