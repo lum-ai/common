@@ -55,6 +55,7 @@ object FileUtils {
     }
 
     def listFilesByRegex(pattern: String, caseSensitive: Boolean = true, recursive: Boolean = false): Iterator[File] = {
+      if (!file.isDirectory) return Iterator.empty
       val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
       val fileFilter = new RegexFileFilter(pattern, caseSensitivity)
       val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
@@ -62,6 +63,7 @@ object FileUtils {
     }
 
     def listFilesByWildcard(wildcard: String, caseSensitive: Boolean = true, recursive: Boolean = false): Iterator[File] = {
+      if (!file.isDirectory) return Iterator.empty
       val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
       val fileFilter = new WildcardFileFilter(wildcard, caseSensitivity)
       val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
