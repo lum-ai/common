@@ -39,10 +39,10 @@ object FileUtils {
     }
 
     private def walkFiles(fileFilter: IOFileFilter, dirFilter: IOFileFilter): Iterator[File] = {
+      if (!file.isDirectory) return Iterator.empty
       val effectiveFileFilter = FileFilterUtils.and(fileFilter, FileFilterUtils.notFileFilter(DirectoryFileFilter.INSTANCE))
       val effectiveDirFilter = FileFilterUtils.and(dirFilter, DirectoryFileFilter.INSTANCE)
       val filter: FileFilter = FileFilterUtils.or(effectiveFileFilter, effectiveDirFilter)
-
       def dirWalker(f: File): Iterator[File] = {
         if (f.isDirectory) {
           f.listFiles(filter).toIterator.flatMap(dirWalker)
@@ -50,12 +50,10 @@ object FileUtils {
           Iterator(f)
         }
       }
-
       dirWalker(file)
     }
 
     def listFilesByRegex(pattern: String, caseSensitive: Boolean = true, recursive: Boolean = false): Iterator[File] = {
-      if (!file.isDirectory) return Iterator.empty
       val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
       val fileFilter = new RegexFileFilter(pattern, caseSensitivity)
       val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
@@ -63,7 +61,6 @@ object FileUtils {
     }
 
     def listFilesByWildcard(wildcard: String, caseSensitive: Boolean = true, recursive: Boolean = false): Iterator[File] = {
-      if (!file.isDirectory) return Iterator.empty
       val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
       val fileFilter = new WildcardFileFilter(wildcard, caseSensitivity)
       val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
