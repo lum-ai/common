@@ -69,6 +69,11 @@ object FileUtils {
 
     def touch(): Unit = IOFileUtils.touch(file)
 
+    /** Returns the size of the file (in bytes) */
+    def size: Long = IOFileUtils.sizeOf(file)
+
+    def sizeAsBigInt: BigInt = IOFileUtils.sizeOfAsBigInteger(file)
+
     def readString(charset: String): String = IOFileUtils.readFileToString(file, charset)
 
     def readString(charset: Charset = UTF_8): String = IOFileUtils.readFileToString(file, charset)
