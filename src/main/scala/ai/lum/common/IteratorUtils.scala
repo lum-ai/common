@@ -28,13 +28,12 @@ object IteratorUtils {
 
   // Gets an iterator of groups of A.
   // Each group is traversed in parallel.
-  class ParIterator[A](
-      private val remainingGroups: Iterator[Seq[A]]
-  ) extends AbstractIterator[A] { self =>
+  class ParIterator[A](groups: Iterator[Seq[A]]) extends AbstractIterator[A] { self =>
 
     var tasksupport: TaskSupport = defaultTaskSupport
 
     private var currentGroup: List[A] = Nil
+    private val remainingGroups: Iterator[Seq[A]] = groups.filter(_.nonEmpty)
 
     def next(): A = currentGroup match {
       case head :: tail =>
@@ -59,8 +58,14 @@ object IteratorUtils {
     def par: ParIterator[A] = this
 
     // parallelizes a single group and attaches tasksupport
-    private def mkPar(group: Seq[A]): ParSeq[A] = {
+    private def mkParSeq[B](group: Seq[B]): ParSeq[B] = {
       val par = group.par
+      par.tasksupport = tasksupport
+      par
+    }
+
+    private def mkParIterator[B](iter: Iterator[Seq[B]]): ParIterator[B] = {
+      val par = new ParIterator(iter)
       par.tasksupport = tasksupport
       par
     }
@@ -74,28 +79,19 @@ object IteratorUtils {
     }
 
     override def foreach[U](f: A => U): Unit = {
-      allGroups.foreach(g => mkPar(g).foreach(f))
+      allGroups.foreach(g => mkParSeq(g).foreach(f))
     }
 
     override def map[B](f: A => B): Iterator[B] = {
-      val iter = allGroups.map(g => mkPar(g).map(f).seq)
-      val parIter = new ParIterator(iter)
-      parIter.tasksupport = tasksupport
-      parIter
+      mkParIterator(allGroups.map(g => mkParSeq(g).map(f).seq))
     }
 
     override def flatMap[B](f: A => GenTraversableOnce[B]): Iterator[B] = {
-      val iter = allGroups.map(g => mkPar(g).flatMap(f).seq).filter(_.nonEmpty)
-      val parIter = new ParIterator(iter)
-      parIter.tasksupport = tasksupport
-      parIter
+      mkParIterator(allGroups.map(g => mkParSeq(g).flatMap(f).seq))
     }
 
     override def filter(p: A => Boolean): Iterator[A] = {
-      val iter = allGroups.map(g => mkPar(g).filter(p).seq).filter(_.nonEmpty)
-      val parIter = new ParIterator(iter)
-      parIter.tasksupport = tasksupport
-      parIter
+      mkParIterator(allGroups.map(g => mkParSeq(g).filter(p).seq))
     }
 
   }
