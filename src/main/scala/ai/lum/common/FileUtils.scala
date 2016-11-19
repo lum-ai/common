@@ -39,7 +39,7 @@ object FileUtils {
     }
 
     private def walkFiles(fileFilter: IOFileFilter, dirFilter: IOFileFilter): Iterator[File] = {
-      if (!file.isDirectory) return Iterator.empty
+      require(file.isDirectory, s"${file.getCanonicalPath()} is not a directory")
       val effectiveFileFilter = FileFilterUtils.and(fileFilter, FileFilterUtils.notFileFilter(DirectoryFileFilter.INSTANCE))
       val effectiveDirFilter = FileFilterUtils.and(dirFilter, DirectoryFileFilter.INSTANCE)
       val filter: FileFilter = FileFilterUtils.or(effectiveFileFilter, effectiveDirFilter)
