@@ -21,7 +21,6 @@ import java.time.Duration
 import java.net.{ URI, URL }
 import java.nio.charset.Charset
 import java.nio.file.{ Path, Paths }
-import scala.reflect.ClassTag
 import scala.collection.JavaConverters._
 import com.typesafe.config._
 
@@ -56,7 +55,7 @@ object ConfigUtils {
   }
 
   /** Reads the value of a Config field according to its type */
-  abstract class ConfigFieldReader[A: ClassTag] {
+  trait ConfigFieldReader[A] {
     def read(config: Config, path: String): A
   }
 
