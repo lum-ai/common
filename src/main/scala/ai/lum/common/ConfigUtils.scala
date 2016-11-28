@@ -22,6 +22,8 @@ import java.net.{ URI, URL }
 import java.nio.charset.Charset
 import java.nio.file.{ Path, Paths }
 import scala.collection.JavaConverters._
+import scala.language.experimental.macros
+import scala.reflect.macros.blackbox.Context
 import com.typesafe.config._
 
 object ConfigUtils {
@@ -57,11 +59,37 @@ object ConfigUtils {
   /** Reads the value of a Config field according to its type */
   trait ConfigFieldReader[A] {
     def read(config: Config, path: String): A
+    def readIterable(config: Config, path: String): Iterable[A]
+  }
+
+  object ConfigFieldReader {
+    // implicit materializer
+    // http://docs.scala-lang.org/overviews/macros/implicits.html#implicit-materializers
+    implicit def materialize[T]: ConfigFieldReader[T] = macro materializeImpl[T]
+    def materializeImpl[T: c.WeakTypeTag](c: Context): c.Expr[ConfigFieldReader[T]] = {
+      import c.universe._
+      val T = weakTypeOf[T]
+      val CC = T.typeConstructor
+      val targs = implicitly[c.WeakTypeTag[T]].tpe match { case TypeRef(_, _, args) => args }
+      val A = TypeName(targs.head.toString)
+      c.Expr[ConfigFieldReader[T]](q"""
+        new ConfigFieldReader[$T] {
+          def read(config: Config, path: String): $T = retrieveIterable[$A](config, path).to[$CC]
+          def readIterable(config: Config, path: String): Iterable[$T] = ???
+          def retrieveIterable[B: ConfigFieldReader](config: Config, path: String): Iterable[B] = {
+            implicitly[ConfigFieldReader[B]].readIterable(config, path)
+          }
+        }
+      """)
+    }
   }
 
   implicit object BooleanConfigFieldReader extends ConfigFieldReader[Boolean] {
     def read(config: Config, path: String): Boolean = {
       config.getBoolean(path)
+    }
+    def readIterable(config: Config, path: String): Iterable[Boolean] = {
+      config.getBooleanList(path).asScala.map(Boolean2boolean)
     }
   }
 
@@ -69,11 +97,17 @@ object ConfigUtils {
     def read(config: Config, path: String): Int = {
       config.getInt(path)
     }
+    def readIterable(config: Config, path: String): Iterable[Int] = {
+      config.getIntList(path).asScala.map(Integer2int)
+    }
   }
 
   implicit object LongConfigFieldReader extends ConfigFieldReader[Long] {
     def read(config: Config, path: String): Long = {
       config.getLong(path)
+    }
+    def readIterable(config: Config, path: String): Iterable[Long] = {
+      config.getLongList(path).asScala.map(Long2long)
     }
   }
 
@@ -81,11 +115,17 @@ object ConfigUtils {
     def read(config: Config, path: String): Double = {
       config.getDouble(path)
     }
+    def readIterable(config: Config, path: String): Iterable[Double] = {
+      config.getDoubleList(path).asScala.map(Double2double)
+    }
   }
 
   implicit object StringConfigFieldReader extends ConfigFieldReader[String] {
     def read(config: Config, path: String): String = {
       config.getString(path)
+    }
+    def readIterable(config: Config, path: String): Iterable[String] = {
+      config.getStringList(path).asScala
     }
   }
 
@@ -93,11 +133,17 @@ object ConfigUtils {
     def read(config: Config, path: String): URI = {
       new URI(config.getString(path))
     }
+    def readIterable(config: Config, path: String): Iterable[URI] = {
+      config.getStringList(path).asScala.map(new URI(_))
+    }
   }
 
   implicit object URLConfigFieldReader extends ConfigFieldReader[URL] {
     def read(config: Config, path: String): URL = {
       new URL(config.getString(path))
+    }
+    def readIterable(config: Config, path: String): Iterable[URL] = {
+      config.getStringList(path).asScala.map(new URL(_))
     }
   }
 
@@ -105,11 +151,17 @@ object ConfigUtils {
     def read(config: Config, path: String): Path = {
       Paths.get(config.getString(path))
     }
+    def readIterable(config: Config, path: String): Iterable[Path] = {
+      config.getStringList(path).asScala.map(Paths.get(_))
+    }
   }
 
   implicit object FileConfigFieldReader extends ConfigFieldReader[File] {
     def read(config: Config, path: String): File = {
       new File(config.getString(path))
+    }
+    def readIterable(config: Config, path: String): Iterable[File] = {
+      config.getStringList(path).asScala.map(new File(_))
     }
   }
 
@@ -117,11 +169,17 @@ object ConfigUtils {
     def read(config: Config, path: String): Charset = {
       Charset.forName(config.getString(path))
     }
+    def readIterable(config: Config, path: String): Iterable[Charset] = {
+      config.getStringList(path).asScala.map(Charset.forName)
+    }
   }
 
   implicit object ConfigObjectConfigFieldReader extends ConfigFieldReader[ConfigObject] {
     def read(config: Config, path: String): ConfigObject = {
       config.getObject(path)
+    }
+    def readIterable(config: Config, path: String): Iterable[ConfigObject] = {
+      config.getObjectList(path).asScala
     }
   }
 
@@ -129,17 +187,24 @@ object ConfigUtils {
     def read(config: Config, path: String): Config = {
       config.getConfig(path)
     }
+    def readIterable(config: Config, path: String): Iterable[Config] = {
+      config.getConfigList(path).asScala
+    }
   }
 
   implicit object ConfigValueConfigFieldReader extends ConfigFieldReader[ConfigValue] {
     def read(config: Config, path: String): ConfigValue = {
       config.getValue(path)
     }
+    def readIterable(config: Config, path: String): Iterable[ConfigValue] = ???
   }
 
   implicit object ConfigMemorySizeConfigFieldReader extends ConfigFieldReader[ConfigMemorySize] {
     def read(config: Config, path: String): ConfigMemorySize = {
       config.getMemorySize(path)
+    }
+    def readIterable(config: Config, path: String): Iterable[ConfigMemorySize] = {
+      config.getMemorySizeList(path).asScala
     }
   }
 
@@ -147,106 +212,23 @@ object ConfigUtils {
     def read(config: Config, path: String): Duration = {
       config.getDuration(path)
     }
+    def readIterable(config: Config, path: String): Iterable[Duration] = {
+      config.getDurationList(path).asScala
+    }
   }
 
   implicit object ConfigListObjectConfigFieldReader extends ConfigFieldReader[ConfigList] {
     def read(config: Config, path: String): ConfigList = {
       config.getList(path)
     }
+    def readIterable(config: Config, path: String): Iterable[ConfigList] = ???
   }
 
   implicit object AnyRefConfigFieldReader extends ConfigFieldReader[AnyRef] {
     def read(config: Config, path: String): AnyRef = {
       config.getAnyRef(path)
     }
-  }
-
-  implicit object BooleanListConfigFieldReader extends ConfigFieldReader[List[Boolean]] {
-    def read(config: Config, path: String): List[Boolean] = {
-      config.getBooleanList(path).asScala.map(Boolean2boolean).toList
-    }
-  }
-
-  implicit object IntListConfigFieldReader extends ConfigFieldReader[List[Int]] {
-    def read(config: Config, path: String): List[Int] = {
-      config.getIntList(path).asScala.map(Integer2int).toList
-    }
-  }
-
-  implicit object LongListConfigFieldReader extends ConfigFieldReader[List[Long]] {
-    def read(config: Config, path: String): List[Long] = {
-      config.getLongList(path).asScala.map(Long2long).toList
-    }
-  }
-
-  implicit object DoubleListConfigFieldReader extends ConfigFieldReader[List[Double]] {
-    def read(config: Config, path: String): List[Double] = {
-      config.getDoubleList(path).asScala.map(Double2double).toList
-    }
-  }
-
-  implicit object StringListConfigFieldReader extends ConfigFieldReader[List[String]] {
-    def read(config: Config, path: String): List[String] = {
-      config.getStringList(path).asScala.toList
-    }
-  }
-
-  implicit object URIListConfigFieldReader extends ConfigFieldReader[List[URI]] {
-    def read(config: Config, path: String): List[URI] = {
-      config.getStringList(path).asScala.map(new URI(_)).toList
-    }
-  }
-
-  implicit object URLListConfigFieldReader extends ConfigFieldReader[List[URL]] {
-    def read(config: Config, path: String): List[URL] = {
-      config.getStringList(path).asScala.map(new URL(_)).toList
-    }
-  }
-
-  implicit object PathListConfigFieldReader extends ConfigFieldReader[List[Path]] {
-    def read(config: Config, path: String): List[Path] = {
-      config.getStringList(path).asScala.map(Paths.get(_)).toList
-    }
-  }
-
-  implicit object FileListConfigFieldReader extends ConfigFieldReader[List[File]] {
-    def read(config: Config, path: String): List[File] = {
-      config.getStringList(path).asScala.map(new File(_)).toList
-    }
-  }
-
-  implicit object CharsetListConfigFieldReader extends ConfigFieldReader[List[Charset]] {
-    def read(config: Config, path: String): List[Charset] = {
-      config.getStringList(path).asScala.map(Charset.forName).toList
-    }
-  }
-
-  implicit object ConfigObjectListConfigFieldReader extends ConfigFieldReader[List[ConfigObject]] {
-    def read(config: Config, path: String): List[ConfigObject] = {
-      config.getObjectList(path).asScala.toList
-    }
-  }
-
-  implicit object ConfigListConfigFieldReader extends ConfigFieldReader[List[Config]] {
-    def read(config: Config, path: String): List[Config] = {
-      config.getConfigList(path).asScala.toList
-    }
-  }
-
-  implicit object ConfigMemorySizeListConfigFieldReader extends ConfigFieldReader[List[ConfigMemorySize]] {
-    def read(config: Config, path: String): List[ConfigMemorySize] = {
-      config.getMemorySizeList(path).asScala.toList
-    }
-  }
-
-  implicit object DurationListConfigFieldReader extends ConfigFieldReader[List[Duration]] {
-    def read(config: Config, path: String): List[Duration] = {
-      config.getDurationList(path).asScala.toList
-    }
-  }
-
-  implicit object AnyRefListConfigFieldReader extends ConfigFieldReader[List[AnyRef]] {
-    def read(config: Config, path: String): List[AnyRef] = {
+    def readIterable(config: Config, path: String): Iterable[AnyRef] = {
       config.getAnyRefList(path).asScala.toList.asInstanceOf[List[AnyRef]]
     }
   }

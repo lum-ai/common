@@ -28,6 +28,7 @@ scalacOptions in (Compile, console) := commonScalacOptions
 scalacOptions in (Compile, doc) += "-no-link-warnings" // suppresses problems with scaladoc @throws links
 
 libraryDependencies ++= Seq(
+  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "com.typesafe" % "config" % "1.3.0",
   "org.apache.commons" % "commons-lang3" % "3.4",
   "commons-io" % "commons-io" % "2.5"
