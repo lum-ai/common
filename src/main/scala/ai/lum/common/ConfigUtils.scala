@@ -65,8 +65,8 @@ object ConfigUtils {
   object ConfigFieldReader {
     // implicit materializer
     // http://docs.scala-lang.org/overviews/macros/implicits.html#implicit-materializers
-    implicit def materialize[T]: ConfigFieldReader[T] = macro materializeImpl[T]
-    def materializeImpl[T: c.WeakTypeTag](c: Context): c.Expr[ConfigFieldReader[T]] = {
+    implicit def materialize[T]: ConfigFieldReader[T] = macro impl[T]
+    def impl[T: c.WeakTypeTag](c: Context): c.Expr[ConfigFieldReader[T]] = {
       import c.universe._
       val T = weakTypeOf[T]
       val CC = T.typeConstructor
@@ -229,7 +229,7 @@ object ConfigUtils {
       config.getAnyRef(path)
     }
     def readIterable(config: Config, path: String): Iterable[AnyRef] = {
-      config.getAnyRefList(path).asScala.toList.asInstanceOf[List[AnyRef]]
+      config.getAnyRefList(path).asScala.asInstanceOf[Iterable[AnyRef]]
     }
   }
 
