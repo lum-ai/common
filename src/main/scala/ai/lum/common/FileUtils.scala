@@ -16,7 +16,7 @@
 
 package ai.lum.common
 
-import java.io.{ File, FileFilter }
+import java.io._
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets.UTF_8
 import org.apache.commons.io.{ FileUtils => IOFileUtils, FilenameUtils, IOCase }
@@ -73,6 +73,12 @@ object FileUtils {
     def size: Long = IOFileUtils.sizeOf(file)
 
     def sizeAsBigInt: BigInt = IOFileUtils.sizeOfAsBigInteger(file)
+
+    /** Returns an input stream. Don't forget to close it! */
+    def inputStream: BufferedInputStream = new BufferedInputStream(new FileInputStream(file))
+
+    /** Returns an output stream. Don't forget to close it! */
+    def outputStream: BufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))
 
     def readString(charset: String): String = IOFileUtils.readFileToString(file, charset)
 
