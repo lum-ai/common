@@ -114,6 +114,12 @@ object StringUtils {
       sub.replace(str)
     }
 
+    /** Checks if the string contains only lowercase characters. */
+    def isAllLowerCase: Boolean = ApacheStringUtils.isAllLowerCase(str)
+
+    /** Checks if the string contains only uppercase characters. */
+    def isAllUpperCase: Boolean = ApacheStringUtils.isAllUpperCase(str)
+
     /** Checks if string contains only whitespace.
      *  Note that we consider the empty string to be whitespace.
      */
