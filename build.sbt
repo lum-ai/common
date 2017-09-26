@@ -4,7 +4,9 @@ name := "common"
 
 organization := "ai.lum"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.11"
+
+crossScalaVersions := Seq("2.11.11", "2.12.3")
 
 val commonScalacOptions = Seq(
   "-feature",
@@ -39,14 +41,14 @@ releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
-  runTest,
+  releaseStepCommandAndRemaining("+test"),
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  ReleaseStep(action = Command.process("publishSigned", _)),
+  releaseStepCommandAndRemaining("+publishSigned"),
   setNextVersion,
   commitNextVersion,
-  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  releaseStepCommandAndRemaining("sonatypeReleaseAll"),
   pushChanges
 )
 
