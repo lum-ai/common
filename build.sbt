@@ -41,7 +41,7 @@ releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
-  releaseStepCommandAndRemaining("+test"),
+  runTest,
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
@@ -51,6 +51,12 @@ releaseProcess := Seq[ReleaseStep](
   releaseStepCommandAndRemaining("sonatypeReleaseAll"),
   pushChanges
 )
+
+
+// scaladoc hosting
+enablePlugins(SiteScaladocPlugin)
+enablePlugins(GhpagesPlugin)
+git.remoteRepo := "git@github.com:lum-ai/common.git"
 
 
 // Publishing settings
