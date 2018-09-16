@@ -33,30 +33,30 @@ object Serializer {
   }
 
   /** serialize object to output stream */
-  def save[A](obj: A, outputStream: OutputStream): Unit = {
+  def dump[A](obj: A, outputStream: OutputStream): Unit = {
     using(new ObjectOutputStream(outputStream)) { oos =>
       oos.writeObject(obj)
     }
   }
 
   /** serialize object to file */
-  def save[A](obj: A, file: File): Unit = {
+  def dump[A](obj: A, file: File): Unit = {
     using(new FileOutputStream(file)) { fos =>
-      save(obj, fos)
+      dump(obj, fos)
     }
   }
 
   /** serialize object to file */
-  def save[A](obj: A, filename: String): Unit = {
+  def dump[A](obj: A, filename: String): Unit = {
     using(new FileOutputStream(filename)) { fos =>
-      save(obj, fos)
+      dump(obj, fos)
     }
   }
 
   /** serialize object to byte array */
-  def save[A](obj: A): Array[Byte] = {
+  def dump[A](obj: A): Array[Byte] = {
     using(new ByteArrayOutputStream()) { baos =>
-      save(obj, baos)
+      dump(obj, baos)
       baos.toByteArray
     }
   }
