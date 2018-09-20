@@ -19,7 +19,8 @@ package ai.lum.common
 import scala.collection.JavaConverters._
 import org.apache.commons.lang3.{ StringUtils => ApacheStringUtils }
 import org.apache.commons.lang3.StringEscapeUtils
-import org.apache.commons.lang3.text.{ WordUtils, StrSubstitutor }
+import org.apache.commons.lang3.text.WordUtils
+import org.apache.commons.text.StringSubstitutor
 
 object StringUtils {
 
@@ -109,7 +110,7 @@ object StringUtils {
      *  from the map.
      */
     def replaceVariables(values: Map[String, String]): String = {
-      val sub = new StrSubstitutor(values.asJava)
+      val sub = new StringSubstitutor(values.asJava)
       sub.setEnableSubstitutionInVariables(true)
       sub.replace(str)
     }
