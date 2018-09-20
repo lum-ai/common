@@ -33,79 +33,79 @@ object Serializer {
   }
 
   /** serialize object to output stream */
-  def dump[A](obj: A, outputStream: OutputStream): Unit = {
+  def serialize[A](obj: A, outputStream: OutputStream): Unit = {
     using(new ObjectOutputStream(outputStream)) { oos =>
       oos.writeObject(obj)
     }
   }
 
   /** serialize object to file */
-  def dump[A](obj: A, file: File): Unit = {
+  def serialize[A](obj: A, file: File): Unit = {
     using(new FileOutputStream(file)) { fos =>
-      dump(obj, fos)
+      serialize(obj, fos)
     }
   }
 
   /** serialize object to file */
-  def dump[A](obj: A, filename: String): Unit = {
+  def serialize[A](obj: A, filename: String): Unit = {
     using(new FileOutputStream(filename)) { fos =>
-      dump(obj, fos)
+      serialize(obj, fos)
     }
   }
 
   /** serialize object to byte array */
-  def dump[A](obj: A): Array[Byte] = {
+  def serialize[A](obj: A): Array[Byte] = {
     using(new ByteArrayOutputStream()) { baos =>
-      dump(obj, baos)
+      serialize(obj, baos)
       baos.toByteArray
     }
   }
 
   /** deserialize from input stream */
-  def load[A](inputStream: InputStream): A = {
-    load[A](inputStream, getClass().getClassLoader())
+  def deserialize[A](inputStream: InputStream): A = {
+    deserialize[A](inputStream, getClass().getClassLoader())
   }
 
   /** deserialize from input stream */
-  def load[A](inputStream: InputStream, classLoader: ClassLoader): A = {
+  def deserialize[A](inputStream: InputStream, classLoader: ClassLoader): A = {
     using(new ClassLoaderObjectInputStream(classLoader, inputStream)) { ois =>
       ois.readObject().asInstanceOf[A]
     }
   }
 
   /** deserialize from file */
-  def load[A](file: File): A = {
-    load[A](file, getClass().getClassLoader())
+  def deserialize[A](file: File): A = {
+    deserialize[A](file, getClass().getClassLoader())
   }
 
   /** deserialize from file */
-  def load[A](file: File, classLoader: ClassLoader): A = {
+  def deserialize[A](file: File, classLoader: ClassLoader): A = {
     using(new FileInputStream(file)) { fis =>
-      load[A](fis, classLoader)
+      deserialize[A](fis, classLoader)
     }
   }
 
   /** deserialize from file */
-  def load[A](filename: String): A = {
-    load[A](filename, getClass().getClassLoader())
+  def deserialize[A](filename: String): A = {
+    deserialize[A](filename, getClass().getClassLoader())
   }
 
   /** deserialize from file */
-  def load[A](filename: String, classLoader: ClassLoader): A = {
+  def deserialize[A](filename: String, classLoader: ClassLoader): A = {
     using(new FileInputStream(filename)) { fis =>
-      load[A](fis, classLoader)
+      deserialize[A](fis, classLoader)
     }
   }
 
   /** deserialize from byte array */
-  def load[A](bytes: Array[Byte]): A = {
-    load[A](bytes, getClass().getClassLoader())
+  def deserialize[A](bytes: Array[Byte]): A = {
+    deserialize[A](bytes, getClass().getClassLoader())
   }
 
   /** deserialize from byte array */
-  def load[A](bytes: Array[Byte], classLoader: ClassLoader): A = {
+  def deserialize[A](bytes: Array[Byte], classLoader: ClassLoader): A = {
     using(new ByteArrayInputStream(bytes)) { bais =>
-      load[A](bais, classLoader)
+      deserialize[A](bais, classLoader)
     }
   }
 
