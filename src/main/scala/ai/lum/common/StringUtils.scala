@@ -103,9 +103,6 @@ object StringUtils {
     /** Wraps a single line of text, identifying words by ' '. */
     def wordWrap(wrapLength: Int): String = WordUtils.wrap(str, wrapLength)
 
-    /** Find the edit distance to another String */
-    def distanceTo(str2: String): Int = ApacheStringUtils.getLevenshteinDistance(str, str2)
-
     /** Replaces all the occurrences of variables with their matching values
      *  from the map.
      */
