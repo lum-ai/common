@@ -75,10 +75,10 @@ object FileUtils {
     def sizeAsBigInt: BigInt = IOFileUtils.sizeOfAsBigInteger(file)
 
     /** Returns an input stream. Don't forget to close it! */
-    def inputStream: BufferedInputStream = new BufferedInputStream(new FileInputStream(file))
+    def toInputStream: BufferedInputStream = new BufferedInputStream(new FileInputStream(file))
 
     /** Returns an output stream. Don't forget to close it! */
-    def outputStream: BufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))
+    def toOutputStream: BufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))
 
     def readString(charset: String): String = IOFileUtils.readFileToString(file, charset)
 
