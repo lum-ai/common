@@ -43,7 +43,7 @@ object ConfigUtils {
       try {
         Some(apply[A](path))
       } catch {
-        case e: ConfigException.Missing => None
+        case _: ConfigException.Missing => None
       }
     }
 

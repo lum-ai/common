@@ -41,7 +41,7 @@ object RandomUtils {
 
     /** Returns a random long within the specified range. */
     def nextLong(startInclusive: Long, endExclusive: Long): Long = {
-      random.nextDouble(startInclusive, endExclusive).toLong
+      random.nextDouble(startInclusive.toDouble, endExclusive.toDouble).toLong
     }
 
     /** Returns a random double within the specified range. */
@@ -187,7 +187,7 @@ object RandomUtils {
         case indexed: IndexedSeq[A] =>
           // if traversable is indexed then generate k random indices
           val n = indexed.size
-          for (i <- 0 until k) {
+          for (_ <- 0 until k) {
             builder += indexed(random.nextInt(n))
           }
         case _ =>
@@ -216,7 +216,7 @@ object RandomUtils {
       require(k >= 0, "sample size must be non-negative")
       val buffer = new ArrayBuffer[A](k)
       val iter = xs.toIterator
-      for (i <- 1 to k) {
+      for (_ <- 1 to k) {
         if (!iter.hasNext) sys.error("sample size larger than population")
         buffer += iter.next
       }
