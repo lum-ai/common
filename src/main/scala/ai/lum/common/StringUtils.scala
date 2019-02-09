@@ -31,6 +31,16 @@ object StringUtils {
     /** Removes diacritics from a string. */
     def stripAccents: String = ApacheStringUtils.stripAccents(str)
 
+    /** Returns a literal pattern String for the specified String.
+     *  This method differs from scala.util.matching.Regex.quote()
+     *  in that it adds backslashes to regex metacharacters instead
+     *  of surrounding the string with \Q and \E
+     */
+    def escapeRegex: String = {
+      val metacharacters = "<([{\\^-=$!|]})?*+.>"
+      str.map(c => if (metacharacters contains c) s"\\$c" else c).mkString
+    }
+
     /**
      * Returns a String value for a CSV column enclosed in double quotes,
      * if required.
