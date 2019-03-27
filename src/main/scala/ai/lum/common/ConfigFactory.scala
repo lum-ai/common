@@ -119,8 +119,7 @@ object ConfigFactory {
       referenceConfig
     ).reduceLeft(_.withFallback(_))
 
-    // Resolve settings. The `odinson.dataDir` setting will be substituted
-    // into the default settings in referenceConfig.
+    // Resolve settings.
     val resolvedConfig = combinedConfig.resolve
 
     resolvedConfig
