@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ai.lum.odinson.common
+package ai.lum.common
 
 import java.io.File
 import java.util.Properties
