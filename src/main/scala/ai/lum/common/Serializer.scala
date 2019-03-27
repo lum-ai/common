@@ -17,20 +17,10 @@
 package ai.lum.common
 
 import java.io._
-import scala.language.reflectiveCalls
 import org.apache.commons.io.input.ClassLoaderObjectInputStream
+import TryWithResources.using
 
 object Serializer {
-
-  type Closable = { def close(): Unit }
-
-  def using[A <: Closable, B](resource: A)(f: A => B): B = {
-    try {
-      f(resource)
-    } finally {
-      resource.close()
-    }
-  }
 
   /** serialize object to output stream */
   def serialize[A](obj: A, outputStream: OutputStream): Unit = {
