@@ -60,10 +60,8 @@ object NumberUtils {
       maxIntegerDigits: Int = Int.MaxValue
     ): String = {
       val formatter = NumberFormat.getIntegerInstance()
-      if (minIntegerDigits > maxIntegerDigits) {
-        formatter.setMinimumIntegerDigits(minIntegerDigits)
-      } else {
-        formatter.setMinimumIntegerDigits(minIntegerDigits)
+      formatter.setMinimumIntegerDigits(minIntegerDigits)
+      if (maxIntegerDigits >= minIntegerDigits) {
         formatter.setMaximumIntegerDigits(maxIntegerDigits)
       }
       formatter.format(n)
@@ -82,16 +80,12 @@ object NumberUtils {
       maxFractionDigits: Int = 2
     ): String = {
       val formatter = NumberFormat.getInstance()
-      if (minIntegerDigits > maxIntegerDigits) {
-        formatter.setMinimumIntegerDigits(minIntegerDigits)
-      } else {
-        formatter.setMinimumIntegerDigits(minIntegerDigits)
+      formatter.setMinimumIntegerDigits(minIntegerDigits)
+      if (maxIntegerDigits >= minIntegerDigits) {
         formatter.setMaximumIntegerDigits(maxIntegerDigits)
       }
-      if (minFractionDigits > maxFractionDigits) {
-        formatter.setMinimumFractionDigits(minFractionDigits)
-      } else {
-        formatter.setMinimumFractionDigits(minFractionDigits)
+      formatter.setMinimumFractionDigits(minFractionDigits)
+      if (maxFractionDigits >= minFractionDigits) {
         formatter.setMaximumFractionDigits(maxFractionDigits)
       }
       formatter.format(n)
