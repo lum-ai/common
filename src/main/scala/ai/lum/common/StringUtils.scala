@@ -81,6 +81,40 @@ object StringUtils {
      */
     def unescapeXml: String = StringEscapeUtils.unescapeXml(str)
 
+    /** generate a version of the string that can be displayed */
+    def display: String = display(0)
+
+    /** generate a version of the string that can be displayed */
+    def display(maxLength: Int): String = {
+      // https://www.unicode.org/charts/PDF/U2400.pdf
+      val nullChar = '\u2400'
+      val backspace = '\u2408'
+      val horizontalTab = '\u2409'
+      val formFeed = '\u240C'
+      val carriageReturn = '\u240D'
+      val newline = '\u2424'
+      // we handle the carriage return line feed sequence as a special case
+      val crlf = "\u240D\u240A"
+      // guillemets
+      val leftGuillemet = '\u00AB'
+      val rightGuillemet = '\u00BB'
+      // format string for display
+      var formattedString = str
+        .replace("\r\n", crlf)
+        .replace('\u0000', nullChar)
+        .replace('\b', backspace)
+        .replace('\t', horizontalTab)
+        .replace('\f', formFeed)
+        .replace('\r', carriageReturn)
+        .replace('\n', newline)
+      // if formattedString is too long then truncate and add ellipsis
+      if (maxLength > 0 && formattedString.length + 2 > maxLength) {
+        formattedString = formattedString.take(maxLength - 3) + "\u2026"
+      }
+      // return formatted string surrounded by guillemets
+      s"$leftGuillemet$formattedString$rightGuillemet"
+    }
+
     /** Splits the provided text on whitespace. */
     def splitOnWhitespace: Array[String] = ApacheStringUtils.split(str)
 
