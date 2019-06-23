@@ -18,9 +18,47 @@ package ai.lum.common
 
 import java.text.NumberFormat
 
-object NumberUtils {
+object DisplayUtils {
 
-  implicit class IntWrapper(val n: Int) extends AnyVal {
+  implicit class StringWrapper(val str: String) extends AnyVal {
+
+    /** generate a version of the string that can be displayed */
+    def display: String = display(0)
+
+    /** generate a version of the string that can be displayed */
+    def display(maxLength: Int = 0): String = {
+      // https://www.unicode.org/charts/PDF/U2400.pdf
+      val nullChar = '\u2400'
+      val backspace = '\u2408'
+      val horizontalTab = '\u2409'
+      val formFeed = '\u240C'
+      val carriageReturn = '\u240D'
+      val newline = '\u2424'
+      // we handle the carriage return line feed sequence as a special case
+      val crlf = "\u240D\u240A"
+      // guillemets
+      val leftGuillemet = '\u00AB'
+      val rightGuillemet = '\u00BB'
+      // format string for display
+      var formattedString = str
+        .replace("\r\n", crlf)
+        .replace('\u0000', nullChar)
+        .replace('\b', backspace)
+        .replace('\t', horizontalTab)
+        .replace('\f', formFeed)
+        .replace('\r', carriageReturn)
+        .replace('\n', newline)
+      // if formattedString is too long then truncate and add ellipsis
+      if (maxLength > 0 && formattedString.length + 2 > maxLength) {
+        formattedString = formattedString.take(maxLength - 3) + "\u2026"
+      }
+      // return formatted string surrounded by guillemets
+      s"$leftGuillemet$formattedString$rightGuillemet"
+    }
+
+  }
+
+  implicit class ShortWrapper(val n: Short) extends AnyVal {
 
     def display: String = n.toLong.display
 
@@ -33,20 +71,15 @@ object NumberUtils {
 
   }
 
-  implicit class FloatWrapper(val n: Float) extends AnyVal {
+  implicit class IntWrapper(val n: Int) extends AnyVal {
 
-    def display: String = n.toDouble.display
+    def display: String = n.toLong.display
 
     def display(
       minIntegerDigits: Int = 1,
-      maxIntegerDigits: Int = Int.MaxValue,
-      minFractionDigits: Int = 0,
-      maxFractionDigits: Int = 2
+      maxIntegerDigits: Int = Int.MaxValue
     ): String = {
-      n.toDouble.display(
-        minIntegerDigits, maxIntegerDigits,
-        minFractionDigits, maxFractionDigits
-      )
+      n.toLong.display(minIntegerDigits, maxIntegerDigits)
     }
 
   }
@@ -65,6 +98,24 @@ object NumberUtils {
         formatter.setMaximumIntegerDigits(maxIntegerDigits)
       }
       formatter.format(n)
+    }
+
+  }
+
+  implicit class FloatWrapper(val n: Float) extends AnyVal {
+
+    def display: String = n.toDouble.display
+
+    def display(
+      minIntegerDigits: Int = 1,
+      maxIntegerDigits: Int = Int.MaxValue,
+      minFractionDigits: Int = 0,
+      maxFractionDigits: Int = 2
+    ): String = {
+      n.toDouble.display(
+        minIntegerDigits, maxIntegerDigits,
+        minFractionDigits, maxFractionDigits
+      )
     }
 
   }
