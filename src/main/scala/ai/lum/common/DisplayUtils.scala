@@ -36,9 +36,10 @@ object DisplayUtils {
       val newline = '\u2424'
       // we handle the carriage return line feed sequence as a special case
       val crlf = "\u240D\u240A"
-      // guillemets
+      // guillemets and ellipsis
       val leftGuillemet = '\u00AB'
       val rightGuillemet = '\u00BB'
+      val ellipsis = '\u2026'
       // format string for display
       var formattedString = str
         .replace("\r\n", crlf)
@@ -50,7 +51,9 @@ object DisplayUtils {
         .replace('\n', newline)
       // if formattedString is too long then truncate and add ellipsis
       if (maxLength > 0 && formattedString.length + 2 > maxLength) {
-        formattedString = formattedString.take(maxLength - 3) + "\u2026"
+        require(maxLength > 3, "maxLength is too small")
+        formattedString = formattedString.take(maxLength - 3)
+        formattedString += ellipsis
       }
       // return formatted string surrounded by guillemets
       s"$leftGuillemet$formattedString$rightGuillemet"
