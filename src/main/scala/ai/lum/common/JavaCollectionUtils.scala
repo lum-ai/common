@@ -93,7 +93,7 @@ object JavaCollectionUtils {
 
 
 
-  implicit class JavaCollectionOps[A, CC[X] <: Collection[X]](val collection: CC[A]) extends AnyVal {
+  implicit class LumAICommonJavaCollectionOps[A, CC[X] <: Collection[X]](val collection: CC[A]) extends AnyVal {
 
     def toBuffer: Buffer[A] = collection.asScala.toBuffer
 
@@ -172,7 +172,7 @@ object JavaCollectionUtils {
 
 
 
-  implicit class JavaMapWrapper[K, V, M[X, Y] <: java.util.Map[X, Y]](val map: M[K, V]) extends AnyVal {
+  implicit class LumAICommonJavaMapWrapper[K, V, M[X, Y] <: java.util.Map[X, Y]](val map: M[K, V]) extends AnyVal {
 
     def toMap: Map[K, V] = map.asScala.toMap
 

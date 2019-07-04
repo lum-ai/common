@@ -24,7 +24,7 @@ import org.apache.commons.io.filefilter._
 
 object FileUtils {
 
-  implicit class FileWrapper(val file: File) extends AnyVal {
+  implicit class LumAICommonFileWrapper(val file: File) extends AnyVal {
 
     /** Gets the base name, minus the full path and extension. */
     def getBaseName(): String = FilenameUtils.getBaseName(file.getPath())

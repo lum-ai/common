@@ -25,7 +25,7 @@ import org.apache.commons.lang3.RandomStringUtils
 
 object RandomUtils {
 
-  implicit class RandomWrapper(val random: Random) extends AnyVal {
+  implicit class LumAICommonRandomWrapper(val random: Random) extends AnyVal {
 
     /** Creates an array of random bytes. */
     def nextBytes(count: Int): Array[Byte] = {

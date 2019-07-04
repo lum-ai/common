@@ -26,7 +26,7 @@ object StringUtils {
 
   // value classes remove the runtime overhead
   // http://docs.scala-lang.org/overviews/core/value-classes.html#extension-methods
-  implicit class StringWrapper(val str: String) extends AnyVal {
+  implicit class LumAICommonStringWrapper(val str: String) extends AnyVal {
 
     /** Removes diacritics from a string. */
     def stripAccents: String = ApacheStringUtils.stripAccents(str)

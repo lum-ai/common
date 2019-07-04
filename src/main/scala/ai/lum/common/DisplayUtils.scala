@@ -20,7 +20,7 @@ import java.text.NumberFormat
 
 object DisplayUtils {
 
-  implicit class DisplayStringWrapper(val str: String) extends AnyVal {
+  implicit class LumAICommonDisplayStringWrapper(val str: String) extends AnyVal {
 
     /** generate a version of the string that can be displayed */
     def display: String = display(0)

@@ -27,7 +27,7 @@ import com.typesafe.config._
 object ConfigUtils {
 
   /** Allows to treat a Config object like a Map[A] */
-  implicit class ConfigWrapper(val config: Config) extends AnyVal {
+  implicit class LumAICommonConfigWrapper(val config: Config) extends AnyVal {
 
     /** Retrieves the value of type A from the Config object.
       * Throws ConfigException.Missing if the value is missing.
