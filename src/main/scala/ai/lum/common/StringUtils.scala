@@ -105,7 +105,13 @@ object StringUtils {
     def swapCase: String = ApacheStringUtils.swapCase(str)
 
     /** Abbreviates a String using ellipses. */
-    def abbreviate(maxWidth: Int): String = ApacheStringUtils.abbreviate(str, maxWidth)
+    def abbreviate(maxWidth: Int): String = {
+      if (maxWidth > 1 && str.length > maxWidth) {
+        str.take(maxWidth - 1) + '\u2026'
+      } else {
+        str
+      }
+    }
 
     /** Extracts the initial characters from each word in the String. */
     def initials: String = WordUtils.initials(str)
