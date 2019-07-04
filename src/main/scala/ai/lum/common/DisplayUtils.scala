@@ -20,7 +20,7 @@ import java.text.NumberFormat
 
 object DisplayUtils {
 
-  implicit class StringWrapper(val str: String) extends AnyVal {
+  implicit class DisplayStringWrapper(val str: String) extends AnyVal {
 
     /** generate a version of the string that can be displayed */
     def display: String = display(0)
@@ -61,7 +61,7 @@ object DisplayUtils {
 
   }
 
-  implicit class ShortWrapper(val n: Short) extends AnyVal {
+  implicit class DisplayShortWrapper(val n: Short) extends AnyVal {
 
     def display: String = n.toLong.display
 
@@ -74,7 +74,7 @@ object DisplayUtils {
 
   }
 
-  implicit class IntWrapper(val n: Int) extends AnyVal {
+  implicit class DisplayIntWrapper(val n: Int) extends AnyVal {
 
     def display: String = n.toLong.display
 
@@ -87,7 +87,7 @@ object DisplayUtils {
 
   }
 
-  implicit class LongWrapper(val n: Long) extends AnyVal {
+  implicit class DisplayLongWrapper(val n: Long) extends AnyVal {
 
     def display: String = display(1, Int.MaxValue)
 
@@ -105,7 +105,7 @@ object DisplayUtils {
 
   }
 
-  implicit class FloatWrapper(val n: Float) extends AnyVal {
+  implicit class DisplayFloatWrapper(val n: Float) extends AnyVal {
 
     def display: String = n.toDouble.display
 
@@ -123,7 +123,7 @@ object DisplayUtils {
 
   }
 
-  implicit class DoubleWrapper(val n: Double) extends AnyVal {
+  implicit class DisplayDoubleWrapper(val n: Double) extends AnyVal {
 
     def display: String = display(1, Int.MaxValue, 0, 2)
 
