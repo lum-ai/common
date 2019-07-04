@@ -60,8 +60,8 @@ scalacOptions in (Compile, doc) += "-no-link-warnings" // suppresses problems wi
 
 libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.3",
-  "org.apache.commons" % "commons-lang3" % "3.8",
-  "org.apache.commons" % "commons-text" % "1.4",
+  "org.apache.commons" % "commons-lang3" % "3.9",
+  "org.apache.commons" % "commons-text" % "1.7",
   "commons-io" % "commons-io" % "2.6"
 )
 
