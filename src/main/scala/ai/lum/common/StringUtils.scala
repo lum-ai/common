@@ -119,6 +119,7 @@ object StringUtils {
     def replaceVariables(values: Map[String, String]): String = {
       val sub = new StringSubstitutor(values.asJava)
       sub.setEnableSubstitutionInVariables(true)
+      sub.setEnableUndefinedVariableException(true)
       sub.replace(str)
     }
 
