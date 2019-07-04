@@ -18,8 +18,8 @@ package ai.lum.common
 
 import scala.collection.JavaConverters._
 import org.apache.commons.lang3.{ StringUtils => ApacheStringUtils }
-import org.apache.commons.lang3.StringEscapeUtils
-import org.apache.commons.lang3.text.WordUtils
+import org.apache.commons.text.WordUtils
+import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.StringSubstitutor
 
 object StringUtils {
@@ -103,15 +103,6 @@ object StringUtils {
      * lower case, and lower case to upper case.
      */
     def swapCase: String = ApacheStringUtils.swapCase(str)
-
-    /** Abbreviates a String using ellipses. */
-    def abbreviate(maxWidth: Int): String = {
-      if (maxWidth > 1 && str.length > maxWidth) {
-        str.take(maxWidth - 1) + '\u2026'
-      } else {
-        str
-      }
-    }
 
     /** Extracts the initial characters from each word in the String. */
     def initials: String = WordUtils.initials(str)
