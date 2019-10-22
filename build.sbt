@@ -4,9 +4,9 @@ name := "common"
 
 organization := "ai.lum"
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.10"
 
-crossScalaVersions := Seq("2.11.12", "2.12.8")
+crossScalaVersions := Seq("2.11.12", "2.12.10")
 
 scalacOptions ++= Seq(
   "-encoding", "utf-8",
@@ -43,9 +43,9 @@ releaseProcess := Seq[ReleaseStep](
   commitReleaseVersion,
   tagRelease,
   releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommandAndRemaining("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
-  releaseStepCommandAndRemaining("sonatypeReleaseAll"),
   pushChanges
 )
 
@@ -58,41 +58,17 @@ git.remoteRepo := "git@github.com:lum-ai/common.git"
 
 // Publishing settings
 
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases" at nexus + "service/local/staging/deploy/maven2")
-}
+publishTo := sonatypePublishToBundle.value
 
 publishMavenStyle := true
 
 publishArtifact in Test := false
 
-pomIncludeRepository := { _ => false }
+licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
-pomExtra :=
-  <url>https://github.com/lum-ai/common</url>
-  <licenses>
-    <license>
-      <name>Apache 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-  <scm>
-    <url>scm:git:github.com/lum-ai/common</url>
-    <connection>scm:git:git@github.com:lum-ai/common.git</connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>marcovzla</id>
-      <name>Marco Antonio Valenzuela Escárcega</name>
-      <url>lum.ai</url>
-    </developer>
-    <developer>
-      <id>ghp</id>
-      <name>Gus Hahn-Powell</name>
-      <url>lum.ai</url>
-    </developer>
-  </developers>
+import xerial.sbt.Sonatype._
+sonatypeProjectHosting := Some(GitHubHosting("lum-ai", "common", "marco@lum.ai"))
+
+developers := List(
+  Developer(id="marcovzla", name="Marco Antonio Valenzuela Escárcega", email="marco@lum.ai", url=url("https://lum.ai/"))
+)
