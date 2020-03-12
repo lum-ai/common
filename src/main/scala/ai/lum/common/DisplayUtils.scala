@@ -34,7 +34,6 @@ object DisplayUtils {
       // format string for display
       var formattedString = str
         // https://www.unicode.org/charts/PDF/U2400.pdf
-        .replace("\r\n", "\u240D\u240A") // carriage return line feed
         .replace('\u0000', '\u2400') // null
         .replace('\u0001', '\u2401') // start of heading
         .replace('\u0002', '\u2402') // start of text
@@ -45,7 +44,7 @@ object DisplayUtils {
         .replace('\u0007', '\u2407') // bell
         .replace('\u0008', '\u2408') // backspace
         .replace('\u0009', '\u2409') // horizontal tabulation
-        .replace('\u000A', '\u2424') // newline (line feed)
+        .replace('\u000A', '\u240A') // line feed
         .replace('\u000B', '\u240B') // vertical tabulation
         .replace('\u000C', '\u240C') // form feed
         .replace('\u000D', '\u240D') // carriage return
