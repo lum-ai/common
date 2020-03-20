@@ -196,14 +196,14 @@ object RandomUtils {
           val iter = xs.toIterator
           var x = iter.next
           val buffer = ArrayBuffer.fill(k)(x)
-          var i = 2d
+          var i = 1
           while (iter.hasNext) {
+            i += 1
             x = iter.next
             for (j <- 0 until k) {
-              val r = random.nextDouble()
-              if (r < 1 / i) buffer(j) = x
+              val r = random.nextInt(i)
+              if (r == 0) buffer(j) = x
             }
-            i += 1
           }
           builder ++= buffer
       }
@@ -220,12 +220,12 @@ object RandomUtils {
         if (!iter.hasNext) sys.error("sample size larger than population")
         buffer += iter.next
       }
-      var i = k + 1
+      var i = k
       while (iter.hasNext) {
+        i += 1
         val x = iter.next
         val j = random.nextInt(i)
         if (j < k) buffer(j) = x
-        i += 1
       }
       val builder = cbf(xs)
       builder ++= buffer
