@@ -28,6 +28,11 @@ object StringUtils {
   // http://docs.scala-lang.org/overviews/core/value-classes.html#extension-methods
   implicit class LumAICommonStringWrapper(val str: String) extends AnyVal {
 
+    /** Returns a string with the java string literal that would produce the original string.
+     *  Similar to python's `repr(string)`.
+     */
+    def toJavaLiteral: String = s""""${str.escapeJava}""""
+
     /** Removes diacritics from a string. */
     def stripAccents: String = ApacheStringUtils.stripAccents(str)
 

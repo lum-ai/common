@@ -27,28 +27,46 @@ object DisplayUtils {
 
     /** generate a version of the string that can be displayed */
     def display(maxLength: Int = 0): String = {
-      // https://www.unicode.org/charts/PDF/U2400.pdf
-      val nullChar = '\u2400'
-      val backspace = '\u2408'
-      val horizontalTab = '\u2409'
-      val formFeed = '\u240C'
-      val carriageReturn = '\u240D'
-      val newline = '\u2424'
-      // we handle the carriage return line feed sequence as a special case
-      val crlf = "\u240D\u240A"
       // guillemets and ellipsis
       val leftGuillemet = '\u00AB'
       val rightGuillemet = '\u00BB'
       val ellipsis = '\u2026'
       // format string for display
       var formattedString = str
-        .replace("\r\n", crlf)
-        .replace('\u0000', nullChar)
-        .replace('\b', backspace)
-        .replace('\t', horizontalTab)
-        .replace('\f', formFeed)
-        .replace('\r', carriageReturn)
-        .replace('\n', newline)
+        // https://www.unicode.org/charts/PDF/U2400.pdf
+        .replace('\u0000', '\u2400') // null
+        .replace('\u0001', '\u2401') // start of heading
+        .replace('\u0002', '\u2402') // start of text
+        .replace('\u0003', '\u2403') // end of text
+        .replace('\u0004', '\u2404') // end of transmission
+        .replace('\u0005', '\u2405') // enquiry
+        .replace('\u0006', '\u2406') // acknowledge
+        .replace('\u0007', '\u2407') // bell
+        .replace('\u0008', '\u2408') // backspace
+        .replace('\u0009', '\u2409') // horizontal tabulation
+        .replace('\u000A', '\u240A') // line feed
+        .replace('\u000B', '\u240B') // vertical tabulation
+        .replace('\u000C', '\u240C') // form feed
+        .replace('\u000D', '\u240D') // carriage return
+        .replace('\u000E', '\u240E') // shift out
+        .replace('\u000F', '\u240F') // shift in
+        .replace('\u0010', '\u2410') // data link escape
+        .replace('\u0011', '\u2411') // device control one
+        .replace('\u0012', '\u2412') // device control two
+        .replace('\u0013', '\u2413') // device control three
+        .replace('\u0014', '\u2414') // device control four
+        .replace('\u0015', '\u2415') // negative acknowledge
+        .replace('\u0016', '\u2416') // synchronous idle
+        .replace('\u0017', '\u2417') // end of transmission block
+        .replace('\u0018', '\u2418') // cancel
+        .replace('\u0019', '\u2419') // end of medium
+        .replace('\u001A', '\u241A') // substitute
+        .replace('\u001B', '\u241B') // escape
+        .replace('\u001C', '\u241C') // file separator
+        .replace('\u001D', '\u241D') // group separator
+        .replace('\u001E', '\u241E') // record separator
+        .replace('\u001F', '\u241F') // unit separator
+        .replace('\u007F', '\u2421') // delete
       // if formattedString is too long then truncate and add ellipsis
       if (maxLength > 0 && formattedString.length + 2 > maxLength) {
         require(maxLength > 3, "maxLength is too small")
