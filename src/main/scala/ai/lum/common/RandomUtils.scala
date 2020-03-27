@@ -209,29 +209,34 @@ object RandomUtils {
       require(k >= 0, "sample size must be non-negative")
       val builder = cbf(xs)
       xs match {
-        case indexed: IndexedSeq[A] =>
+        case xs: IndexedSeq[A] =>
           // if traversable is indexed then generate k random indices
-          val n = indexed.size
+          val n = xs.size
           for (_ <- 0 until k) {
-            builder += indexed(random.nextInt(n))
+            builder += xs(random.nextInt(n))
           }
         case _ =>
           // reservoir sampling with replacement
           // basically, this code does `k` reservoir samples of size 1
           val iter = xs.toIterator
           var x = iter.next
-          val buffer = ArrayBuffer.fill(k)(x)
+          // fill all reservoirs with the same value
+          val reservoirs = ArrayBuffer.fill(k)(x)
           var i = 1
+          // replace elements with gradually decreasing probability
           while (iter.hasNext) {
             i += 1
             x = iter.next
             for (j <- 0 until k) {
               val r = random.nextInt(i)
-              if (r == 0) buffer(j) = x
+              // each reservoir is of size 1, so the random number
+              // must be exactly zero for the element to be replaced
+              if (r == 0) reservoirs(j) = x
             }
           }
-          builder ++= buffer
+          builder ++= reservoirs
       }
+      // return collection of the right type
       builder.result()
     }
 
