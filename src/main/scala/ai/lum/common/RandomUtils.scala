@@ -183,21 +183,24 @@ object RandomUtils {
     private def sampleWithoutReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
       require(xs.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
-      val buffer = new ArrayBuffer[A](k)
+      val reservoir = new ArrayBuffer[A](k)
       val iter = xs.toIterator
+      // fill the reservoir
       for (_ <- 1 to k) {
         if (!iter.hasNext) sys.error("sample size larger than population")
-        buffer += iter.next
+        reservoir += iter.next
       }
       var i = k
+      // replace elements with gradually decreasing probability
       while (iter.hasNext) {
         i += 1
         val x = iter.next
         val j = random.nextInt(i)
-        if (j < k) buffer(j) = x
+        if (j < k) reservoir(j) = x
       }
+      // return collection of the right type
       val builder = cbf(xs)
-      builder ++= buffer
+      builder ++= reservoir
       builder.result()
     }
 
