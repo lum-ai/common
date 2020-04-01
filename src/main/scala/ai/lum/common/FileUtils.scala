@@ -19,8 +19,10 @@ package ai.lum.common
 import java.io._
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets.UTF_8
-import org.apache.commons.io.{ FileUtils => IOFileUtils, FilenameUtils, IOCase }
+import java.util.zip.{ GZIPInputStream, GZIPOutputStream }
+import org.apache.commons.io.{ FileUtils => IOFileUtils, FilenameUtils, IOCase, IOUtils }
 import org.apache.commons.io.filefilter._
+import ai.lum.common.TryWithResources.using
 
 object FileUtils {
 
@@ -90,38 +92,60 @@ object FileUtils {
     /** Returns an output stream. Don't forget to close it! */
     def toOutputStream: BufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))
 
-    def readString(charset: String): String = IOFileUtils.readFileToString(file, charset)
-
-    def readString(charset: Charset = UTF_8): String = IOFileUtils.readFileToString(file, charset)
-
-    def readByteArray(): Array[Byte] = IOFileUtils.readFileToByteArray(file)
-
-    def writeString(string: String, charset: String): Unit = {
-      IOFileUtils.writeStringToFile(file, string, charset)
+    def readString(charset: Charset = UTF_8, gzipSupport: Boolean = true): String = {
+      if (gzipSupport && getExtension.equalsIgnoreCase("gz")) {
+        using (new FileInputStream(file)) { fis =>
+          using (new BufferedInputStream(fis)) { bis =>
+            using (new GZIPInputStream(bis)) { gzis =>
+              IOUtils.toString(gzis, charset)
+            }
+          }
+        }
+      } else {
+        IOFileUtils.readFileToString(file, charset)
+      }
     }
 
-    def writeString(string: String, charset: String, append: Boolean): Unit = {
-      IOFileUtils.writeStringToFile(file, string, charset, append)
+    def readByteArray(gzipSupport: Boolean = true): Array[Byte] = {
+      if (gzipSupport && getExtension.equalsIgnoreCase("gz")) {
+        using (new FileInputStream(file)) { fis =>
+          using (new BufferedInputStream(fis)) { bis =>
+            using (new GZIPInputStream(bis)) { gzis =>
+              IOUtils.toByteArray(gzis)
+            }
+          }
+        }
+      } else {
+        IOFileUtils.readFileToByteArray(file)
+      }
     }
 
-    def writeString(string: String, charset: Charset): Unit = {
-      IOFileUtils.writeStringToFile(file, string, charset)
+    def writeString(string: String, charset: Charset = UTF_8, append: Boolean = false, gzipSupport: Boolean = true): Unit = {
+      if (gzipSupport && getExtension.equalsIgnoreCase("gz")) {
+        using (new FileOutputStream(file, append)) { fos =>
+          using (new BufferedOutputStream(fos)) { bos =>
+            using (new GZIPOutputStream(bos)) { gzos =>
+              IOUtils.write(string, gzos, charset)
+            }
+          }
+        }
+      } else {
+        IOFileUtils.writeStringToFile(file, string, charset, append)
+      }
     }
 
-    def writeString(string: String, charset: Charset = UTF_8, append: Boolean = false): Unit = {
-      IOFileUtils.writeStringToFile(file, string, charset, append)
-    }
-
-    def writeByteArray(bytes: Array[Byte]): Unit = {
-      IOFileUtils.writeByteArrayToFile(file, bytes)
-    }
-
-    def writeByteArray(bytes: Array[Byte], append: Boolean): Unit = {
-      IOFileUtils.writeByteArrayToFile(file, bytes, append)
-    }
-
-    def writeByteArray(bytes: Array[Byte], off: Int, len: Int, append: Boolean = false): Unit = {
-      IOFileUtils.writeByteArrayToFile(file, bytes, off, len, append)
+    def writeByteArray(bytes: Array[Byte], append: Boolean = false, gzipSupport: Boolean = true): Unit = {
+      if (gzipSupport && getExtension.equalsIgnoreCase("gz")) {
+         using (new FileOutputStream(file, append)) { fos =>
+          using (new BufferedOutputStream(fos)) { bos =>
+            using (new GZIPOutputStream(bos)) { gzos =>
+              IOUtils.write(bytes, gzos)
+            }
+          }
+        }
+      } else {
+        IOFileUtils.writeByteArrayToFile(file, bytes, append)
+      }
     }
 
   }
