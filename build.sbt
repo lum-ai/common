@@ -26,6 +26,7 @@ scalacOptions in (Compile, console) --= Seq("-Xlint", "-Xfatal-warnings")
 scalacOptions in (Compile, doc) += "-no-link-warnings" // suppresses problems with scaladoc @throws links
 
 libraryDependencies ++= Seq(
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "com.typesafe" % "config" % "1.3.3",
   "org.apache.commons" % "commons-lang3" % "3.9",
   "org.apache.commons" % "commons-text" % "1.7",
