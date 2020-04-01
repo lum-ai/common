@@ -70,7 +70,7 @@ object FileUtils {
       walkFiles(fileFilter, dirFilter)
     }
 
-    def listFilesByWildcards(wildcards: Seq[String], caseSensitive: Boolean = true, recursive: Boolean = false): Iterator[File] = {
+    def listFilesByWildcards(wildcards: Seq[String], caseSensitive: Boolean = true, recursive: Boolean = false): Iterable[File] = {
       val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
       val fileFilter = new WildcardFileFilter(wildcards.toArray, caseSensitivity)
       val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
