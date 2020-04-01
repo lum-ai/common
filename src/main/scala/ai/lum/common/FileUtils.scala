@@ -33,8 +33,8 @@ object FileUtils {
     def getExtension(): String = FilenameUtils.getExtension(file.getPath())
 
     /** Checks a file to see if it matches the specified wildcard matcher allowing control over case-sensitivity. */
-    def wildcardMatch(wildcard: String, caseSensitive: Boolean = true): Boolean = {
-      val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
+    def wildcardMatch(wildcard: String, caseInsensitive: Boolean = false): Boolean = {
+      val caseSensitivity = if (caseInsensitive) IOCase.INSENSITIVE else IOCase.SENSITIVE
       FilenameUtils.wildcardMatch(file.getPath(), wildcard, caseSensitivity)
     }
 
@@ -56,22 +56,22 @@ object FileUtils {
       }
     }
 
-    def listFilesByRegex(pattern: String, caseSensitive: Boolean = true, recursive: Boolean = false): Iterable[File] = {
-      val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
+    def listFilesByRegex(pattern: String, caseInsensitive: Boolean = false, recursive: Boolean = false): Iterable[File] = {
+      val caseSensitivity = if (caseInsensitive) IOCase.INSENSITIVE else IOCase.SENSITIVE
       val fileFilter = new RegexFileFilter(pattern, caseSensitivity)
       val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
       walkFiles(fileFilter, dirFilter)
     }
 
-    def listFilesByWildcard(wildcard: String, caseSensitive: Boolean = true, recursive: Boolean = false): Iterable[File] = {
-      val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
+    def listFilesByWildcard(wildcard: String, caseInsensitive: Boolean = false, recursive: Boolean = false): Iterable[File] = {
+      val caseSensitivity = if (caseInsensitive) IOCase.INSENSITIVE else IOCase.SENSITIVE
       val fileFilter = new WildcardFileFilter(wildcard, caseSensitivity)
       val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
       walkFiles(fileFilter, dirFilter)
     }
 
-    def listFilesByWildcards(wildcards: Seq[String], caseSensitive: Boolean = true, recursive: Boolean = false): Iterable[File] = {
-      val caseSensitivity = if (caseSensitive) IOCase.SENSITIVE else IOCase.INSENSITIVE
+    def listFilesByWildcards(wildcards: Seq[String], caseInsensitive: Boolean = false, recursive: Boolean = false): Iterable[File] = {
+      val caseSensitivity = if (caseInsensitive) IOCase.INSENSITIVE else IOCase.SENSITIVE
       val fileFilter = new WildcardFileFilter(wildcards.toArray, caseSensitivity)
       val dirFilter = if (recursive) TrueFileFilter.INSTANCE else FalseFileFilter.INSTANCE
       walkFiles(fileFilter, dirFilter)
