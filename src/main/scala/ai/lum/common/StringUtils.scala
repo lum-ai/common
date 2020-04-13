@@ -21,6 +21,7 @@ import org.apache.commons.lang3.{ StringUtils => ApacheStringUtils }
 import org.apache.commons.text.WordUtils
 import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.StringSubstitutor
+import com.ibm.icu.text.Normalizer2
 
 object StringUtils {
 
@@ -188,6 +189,69 @@ object StringUtils {
 
     /** Right pad a String with a specified String. The String is padded to the specified size. */
     def rightPad(size: Int, padStr: String): String = ApacheStringUtils.rightPad(str, size, padStr)
+
+    def normalize: String = normalize(false, false, false)
+
+    def normalizeAggressively: String = normalize(true, true, true)
+
+    def normalize(nfkcCaseFold: Boolean, removeDiacritics: Boolean, replaceChars: Boolean): String = {
+      var result = str
+      // remove diacritics
+      if (removeDiacritics) {
+        result = result.stripAccents
+      }
+      // replace chars
+      if (replaceChars) {
+        for ((k,v) <- LumAICommonStringWrapper.preMapping) {
+          result = result.replaceAllLiterally(k, v)
+        }
+      }
+      // normalize
+      val normalizer = if (nfkcCaseFold) Normalizer2.getNFKCCasefoldInstance() else Normalizer2.getNFCInstance()
+      result = normalizer.normalize(result)
+      // replace chars
+      if (replaceChars) {
+        for ((k,v) <- LumAICommonStringWrapper.postMapping) {
+          result = result.replaceAllLiterally(k, v)
+        }
+      }
+      // return result
+      result
+    }
+
+  }
+
+  object LumAICommonStringWrapper {
+
+    val preMapping: Map[String, String] = Map(
+      "\u00ab" -> "<<", // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+      "\u00bb" -> ">>", // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+      "\u00c6" -> "AE", // LATIN CAPITAL LETTER AE
+      "\u00e6" -> "ae", // LATIN SMALL LETTER AE
+      "\u0152" -> "OE", // LATIN CAPITAL LIGATURE OE
+      "\u0153" -> "oe", // LATIN SMALL LIGATURE OE
+      "\u0192" -> "f", // LATIN SMALL LETTER F WITH HOOK
+      "\u02c6" -> "^", // MODIFIER LETTER CIRCUMFLEX ACCENT
+      "\u02dc" -> "~", // SMALL TILDE
+      "\u2013" -> "-", // EN DASH
+      "\u2014" -> "-", // EM DASH
+      "\u2018" -> "'", // LEFT SINGLE QUOTATION MARK
+      "\u2019" -> "'", // RIGHT SINGLE QUOTATION MARK
+      "\u201a" -> "'", // SINGLE LOW-9 QUOTATION MARK
+      "\u201c" -> "\"", // LEFT DOUBLE QUOTATION MARK
+      "\u201d" -> "\"", // RIGHT DOUBLE QUOTATION MARK
+      "\u201e" -> "\"", // DOUBLE LOW-9 QUOTATION MARK
+      "\u2020" -> "*", // DAGGER
+      "\u2021" -> "**", // DOUBLE DAGGER
+      "\u2022" -> "-", // BULLET
+      "\u2039" -> "<", // SINGLE LEFT-POINTING ANGLE QUOTATION MARK
+      "\u203a" -> ">", // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+      "\u2122" -> "(TM)", // TRADE MARK SIGN
+    )
+
+    val postMapping: Map[String, String] = Map(
+      "\u2044" -> "/", // FRACTION SLASH
+    )
 
   }
 
