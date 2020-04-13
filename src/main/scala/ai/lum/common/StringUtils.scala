@@ -193,12 +193,12 @@ object StringUtils {
     /** Unicode normalization.
      *  NFC as recommended by the W3C in https://www.w3.org/TR/charmod-norm/
      */
-    def normalizeUnicode: String = normalize(false, false, Map.empty, Map.empty)
+    def normalizeUnicode: String = normalizeUnicode(false, false, Map.empty, Map.empty)
 
     /** Unicode normalization.
      *  NFKCCasefold, remove diacritics, replace some chars to ascii versions, collapse spaces.
      */
-    def normalizeUnicodeAggressively: String = normalize(true, true, LumAICommonStringWrapper.preMapping, LumAICommonStringWrapper.postMapping)
+    def normalizeUnicodeAggressively: String = normalizeUnicode(true, true, LumAICommonStringWrapper.preMapping, LumAICommonStringWrapper.postMapping)
 
     /** Unicode normalization */
     def normalizeUnicode(nfkcCasefold: Boolean, removeDiacritics: Boolean, preMapping: Map[String, String], postMapping: Map[String, String]): String = {
@@ -208,7 +208,7 @@ object StringUtils {
         result = result.stripAccents
       }
       // replace chars pre normalization
-      for ((k,v) <- .preMapping) {
+      for ((k,v) <- preMapping) {
         result = result.replaceAllLiterally(k, v)
       }
       // normalize
