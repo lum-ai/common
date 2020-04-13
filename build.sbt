@@ -30,7 +30,8 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.3",
   "org.apache.commons" % "commons-lang3" % "3.9",
   "org.apache.commons" % "commons-text" % "1.7",
-  "commons-io" % "commons-io" % "2.6"
+  "commons-io" % "commons-io" % "2.6",
+  "com.ibm.icu" % "icu4j" % "66.1",
 )
 
 
