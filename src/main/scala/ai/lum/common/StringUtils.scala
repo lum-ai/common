@@ -190,30 +190,33 @@ object StringUtils {
     /** Right pad a String with a specified String. The String is padded to the specified size. */
     def rightPad(size: Int, padStr: String): String = ApacheStringUtils.rightPad(str, size, padStr)
 
-    def normalize: String = normalize(false, false, false)
+    /** Unicode normalization.
+     *  NFC as recommended by the W3C in https://www.w3.org/TR/charmod-norm/
+     */
+    def normalizeUnicode: String = normalize(false, false, Map.empty, Map.empty)
 
-    def normalizeAggressively: String = normalize(true, true, true)
+    /** Unicode normalization.
+     *  NFKCCasefold, remove diacritics, replace some chars to ascii versions, collapse spaces.
+     */
+    def normalizeUnicodeAggressively: String = normalize(true, true, LumAICommonStringWrapper.preMapping, LumAICommonStringWrapper.postMapping)
 
-    def normalize(nfkcCaseFold: Boolean, removeDiacritics: Boolean, replaceChars: Boolean): String = {
+    /** Unicode normalization */
+    def normalizeUnicode(nfkcCasefold: Boolean, removeDiacritics: Boolean, preMapping: Map[String, String], postMapping: Map[String, String]): String = {
       var result = str
       // remove diacritics
       if (removeDiacritics) {
         result = result.stripAccents
       }
-      // replace chars
-      if (replaceChars) {
-        for ((k,v) <- LumAICommonStringWrapper.preMapping) {
-          result = result.replaceAllLiterally(k, v)
-        }
+      // replace chars pre normalization
+      for ((k,v) <- .preMapping) {
+        result = result.replaceAllLiterally(k, v)
       }
       // normalize
-      val normalizer = if (nfkcCaseFold) Normalizer2.getNFKCCasefoldInstance() else Normalizer2.getNFCInstance()
+      val normalizer = if (nfkcCasefold) Normalizer2.getNFKCCasefoldInstance() else Normalizer2.getNFCInstance()
       result = normalizer.normalize(result)
-      // replace chars
-      if (replaceChars) {
-        for ((k,v) <- LumAICommonStringWrapper.postMapping) {
-          result = result.replaceAllLiterally(k, v)
-        }
+      // replace chars post normalization
+      for ((k,v) <- postMapping) {
+        result = result.replaceAllLiterally(k, v)
       }
       // return result
       result
