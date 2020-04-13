@@ -249,11 +249,11 @@ object StringUtils {
       "\u2022" -> "-", // BULLET
       "\u2039" -> "<", // SINGLE LEFT-POINTING ANGLE QUOTATION MARK
       "\u203a" -> ">", // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
-      "\u2122" -> "(TM)", // TRADE MARK SIGN
+      "\u2122" -> "(TM)" // TRADE MARK SIGN
     )
 
     val postMapping: Map[String, String] = Map(
-      "\u2044" -> "/", // FRACTION SLASH
+      "\u2044" -> "/" // FRACTION SLASH
     )
 
   }
