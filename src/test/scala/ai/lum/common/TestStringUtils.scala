@@ -21,6 +21,21 @@ class TestStringUtils extends FlatSpec with Matchers {
     s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
   }
 
+  it should "normalize mu" in {
+    val mu1 = "\u00b5"
+    val mu2 = "\u03bc"
+    val Mu  = "\u039c"
+    mu1 should not equal mu2
+    mu1 should not equal Mu
+    mu2 should not equal Mu
+    mu1.normalizeUnicode shouldEqual mu2.normalizeUnicode
+    mu1.normalizeUnicode should not equal Mu.normalizeUnicode
+    mu2.normalizeUnicode should not equal Mu.normalizeUnicode
+    mu1.normalizeUnicodeAggressively shouldEqual mu2.normalizeUnicodeAggressively
+    mu1.normalizeUnicodeAggressively shouldEqual Mu.normalizeUnicodeAggressively
+    mu2.normalizeUnicodeAggressively shouldEqual Mu.normalizeUnicodeAggressively
+  }
+
   it should "support casefolding" in {
     val s1 = "\u00df"
     val s2 = "ss"
