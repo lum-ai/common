@@ -258,7 +258,7 @@ object StringUtils {
       "\u203a" -> ">",    // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
       "\u2043" -> "-",    // HYPHEN BULLET
       "\u2122" -> "(TM)", // TRADE MARK SIGN
-      "\u25e6" -> "-",    // WHITE BULLET
+      "\u25e6" -> "-"     // WHITE BULLET
     )
 
     // these are some characters that we want to normalize
