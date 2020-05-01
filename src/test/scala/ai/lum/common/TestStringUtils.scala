@@ -5,7 +5,7 @@ import StringUtils._
 
 class TestStringUtils extends FlatSpec with Matchers {
 
-  "StringUtils" should "normalize unicode strings" in {
+  "Unicode normalization" should "normalize unicode strings" in {
     val s1 = "caf\u00e9"
     val s2 = "cafe\u0301"
     s1 should not equal s2
