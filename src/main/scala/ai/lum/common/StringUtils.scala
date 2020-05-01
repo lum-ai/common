@@ -190,6 +190,11 @@ object StringUtils {
     /** Right pad a String with a specified String. The String is padded to the specified size. */
     def rightPad(size: Int, padStr: String): String = ApacheStringUtils.rightPad(str, size, padStr)
 
+    /** Canonical unicode representation.
+     *  Uses NFC as recommended by the W3C in https://www.w3.org/TR/charmod-norm/
+     */
+    def canonicalUnicode: String = Normalizer2.getNFCInstance().normalize(str)
+
     /** Unicode normalization */
     def normalizeUnicode: String = normalizeUnicode(false, false, Map.empty, Map.empty)
 
@@ -224,6 +229,8 @@ object StringUtils {
 
   object LumAICommonStringWrapper {
 
+    // there are some characters that we want to normalize
+    // before the nfkc normalization has taken place
     val preMapping: Map[String, String] = Map(
       "\u00a9" -> "(C)",  // COPYRIGHT SIGN
       "\u00ab" -> "<<",   // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
@@ -254,6 +261,8 @@ object StringUtils {
       "\u25e6" -> "-",    // WHITE BULLET
     )
 
+    // these are some characters that we want to normalize
+    // but we have to wait until after the nfkc normalization has concluded
     val postMapping: Map[String, String] = Map(
       "\u2044" -> "/" // FRACTION SLASH
     )
