@@ -190,9 +190,12 @@ object StringUtils {
     /** Right pad a String with a specified String. The String is padded to the specified size. */
     def rightPad(size: Int, padStr: String): String = ApacheStringUtils.rightPad(str, size, padStr)
 
-    /** Unicode normalization.
-     *  NFC as recommended by the W3C in https://www.w3.org/TR/charmod-norm/
+    /** Canonical unicode representation.
+     *  Uses NFC as recommended by the W3C in https://www.w3.org/TR/charmod-norm/
      */
+    def canonicalUnicode: String = Normalizer2.getNFCInstance().normalize(str)
+
+    /** Unicode normalization */
     def normalizeUnicode: String = normalizeUnicode(false, false, Map.empty, Map.empty)
 
     /** Unicode normalization.
@@ -201,7 +204,7 @@ object StringUtils {
     def normalizeUnicodeAggressively: String = normalizeUnicode(true, true, LumAICommonStringWrapper.preMapping, LumAICommonStringWrapper.postMapping)
 
     /** Unicode normalization */
-    def normalizeUnicode(nfkcCasefold: Boolean, removeDiacritics: Boolean, preMapping: Map[String, String], postMapping: Map[String, String]): String = {
+    def normalizeUnicode(casefold: Boolean, removeDiacritics: Boolean, preMapping: Map[String, String], postMapping: Map[String, String]): String = {
       var result = str
       // remove diacritics
       if (removeDiacritics) {
@@ -212,7 +215,7 @@ object StringUtils {
         result = result.replaceAllLiterally(k, v)
       }
       // normalize
-      val normalizer = if (nfkcCasefold) Normalizer2.getNFKCCasefoldInstance() else Normalizer2.getNFCInstance()
+      val normalizer = if (casefold) Normalizer2.getNFKCCasefoldInstance() else Normalizer2.getNFKCInstance()
       result = normalizer.normalize(result)
       // replace chars post normalization
       for ((k,v) <- postMapping) {
@@ -226,32 +229,40 @@ object StringUtils {
 
   object LumAICommonStringWrapper {
 
+    // there are some characters that we want to normalize
+    // before the nfkc normalization has taken place
     val preMapping: Map[String, String] = Map(
-      "\u00ab" -> "<<", // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
-      "\u00bb" -> ">>", // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
-      "\u00c6" -> "AE", // LATIN CAPITAL LETTER AE
-      "\u00e6" -> "ae", // LATIN SMALL LETTER AE
-      "\u0152" -> "OE", // LATIN CAPITAL LIGATURE OE
-      "\u0153" -> "oe", // LATIN SMALL LIGATURE OE
-      "\u0192" -> "f", // LATIN SMALL LETTER F WITH HOOK
-      "\u02c6" -> "^", // MODIFIER LETTER CIRCUMFLEX ACCENT
-      "\u02dc" -> "~", // SMALL TILDE
-      "\u2013" -> "-", // EN DASH
-      "\u2014" -> "-", // EM DASH
-      "\u2018" -> "'", // LEFT SINGLE QUOTATION MARK
-      "\u2019" -> "'", // RIGHT SINGLE QUOTATION MARK
-      "\u201a" -> "'", // SINGLE LOW-9 QUOTATION MARK
-      "\u201c" -> "\"", // LEFT DOUBLE QUOTATION MARK
-      "\u201d" -> "\"", // RIGHT DOUBLE QUOTATION MARK
-      "\u201e" -> "\"", // DOUBLE LOW-9 QUOTATION MARK
-      "\u2020" -> "*", // DAGGER
-      "\u2021" -> "**", // DOUBLE DAGGER
-      "\u2022" -> "-", // BULLET
-      "\u2039" -> "<", // SINGLE LEFT-POINTING ANGLE QUOTATION MARK
-      "\u203a" -> ">", // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
-      "\u2122" -> "(TM)" // TRADE MARK SIGN
+      "\u00a9" -> "(C)",  // COPYRIGHT SIGN
+      "\u00ab" -> "<<",   // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+      "\u00ae" -> "(R)",  // REGISTERED SIGN
+      "\u00b4" -> "'",    // ACUTE ACCENT
+      "\u00bb" -> ">>",   // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+      "\u00c6" -> "AE",   // LATIN CAPITAL LETTER AE
+      "\u00e6" -> "ae",   // LATIN SMALL LETTER AE
+      "\u0152" -> "OE",   // LATIN CAPITAL LIGATURE OE
+      "\u0153" -> "oe",   // LATIN SMALL LIGATURE OE
+      "\u0192" -> "f",    // LATIN SMALL LETTER F WITH HOOK
+      "\u02c6" -> "^",    // MODIFIER LETTER CIRCUMFLEX ACCENT
+      "\u02dc" -> "~",    // SMALL TILDE
+      "\u2013" -> "-",    // EN DASH
+      "\u2014" -> "-",    // EM DASH
+      "\u2018" -> "'",    // LEFT SINGLE QUOTATION MARK
+      "\u2019" -> "'",    // RIGHT SINGLE QUOTATION MARK
+      "\u201a" -> "'",    // SINGLE LOW-9 QUOTATION MARK
+      "\u201c" -> "\"",   // LEFT DOUBLE QUOTATION MARK
+      "\u201d" -> "\"",   // RIGHT DOUBLE QUOTATION MARK
+      "\u201e" -> "\"",   // DOUBLE LOW-9 QUOTATION MARK
+      "\u2022" -> "-",    // BULLET
+      "\u2023" -> "-",    // TRIANGULAR BULLET
+      "\u2039" -> "<",    // SINGLE LEFT-POINTING ANGLE QUOTATION MARK
+      "\u203a" -> ">",    // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+      "\u2043" -> "-",    // HYPHEN BULLET
+      "\u2122" -> "(TM)", // TRADE MARK SIGN
+      "\u25e6" -> "-",    // WHITE BULLET
     )
 
+    // these are some characters that we want to normalize
+    // but we have to wait until after the nfkc normalization has concluded
     val postMapping: Map[String, String] = Map(
       "\u2044" -> "/" // FRACTION SLASH
     )
