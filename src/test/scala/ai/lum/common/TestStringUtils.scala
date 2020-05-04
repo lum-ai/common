@@ -52,6 +52,14 @@ class TestStringUtils extends FlatSpec with Matchers {
     s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
   }
 
+  it should "normalize backticks" in {
+    val s1 = "Nelson Mandela's health `unstable'"
+    val s2 = "Nelson Mandela's health 'unstable'"
+    s1 should not equal s2
+    s1.normalizeUnicode should not equal s2.normalizeUnicode
+    s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
+  }
+
   it should "replace characters" in {
     // example from "Fluent Python"
     val s1 = "“Herr Voß: • ½ cup of Œtker™ caffè latte • bowl of açaí.”"
