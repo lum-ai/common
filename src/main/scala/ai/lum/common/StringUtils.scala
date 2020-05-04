@@ -232,6 +232,7 @@ object StringUtils {
     // there are some characters that we want to normalize
     // before the nfkc normalization has taken place
     val preMapping: Map[String, String] = Map(
+      "\u0060" -> "'",    // GRAVE ACCENT
       "\u00a9" -> "(C)",  // COPYRIGHT SIGN
       "\u00ab" -> "<<",   // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
       "\u00ae" -> "(R)",  // REGISTERED SIGN
