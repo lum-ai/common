@@ -245,8 +245,8 @@ object StringUtils {
       "\u0192" -> "f",    // LATIN SMALL LETTER F WITH HOOK
       "\u02c6" -> "^",    // MODIFIER LETTER CIRCUMFLEX ACCENT
       "\u02dc" -> "~",    // SMALL TILDE
-      "\u2013" -> "-",    // EN DASH
-      "\u2014" -> "-",    // EM DASH
+      "\u2013" -> "--",   // EN DASH
+      "\u2014" -> "---",  // EM DASH
       "\u2018" -> "'",    // LEFT SINGLE QUOTATION MARK
       "\u2019" -> "'",    // RIGHT SINGLE QUOTATION MARK
       "\u201a" -> "'",    // SINGLE LOW-9 QUOTATION MARK
@@ -259,13 +259,20 @@ object StringUtils {
       "\u203a" -> ">",    // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
       "\u2043" -> "-",    // HYPHEN BULLET
       "\u2122" -> "(TM)", // TRADE MARK SIGN
+      "\u2190" -> "<-",   // LEFTWARDS ARROW
+      "\u2192" -> "->",   // RIGHTWARDS ARROW
+      "\u2194" -> "<->",  // LEFT RIGHT ARROW
+      "\u21d0" -> "<=",   // LEFTWARDS DOUBLE ARROW
+      "\u21d2" -> "=>",   // RIGHTWARDS DOUBLE ARROW
+      "\u21d4" -> "<=>",  // LEFT RIGHT DOUBLE ARROW
       "\u25e6" -> "-"     // WHITE BULLET
     )
 
     // these are some characters that we want to normalize
     // but we have to wait until after the nfkc normalization has concluded
     val postMapping: Map[String, String] = Map(
-      "\u2044" -> "/" // FRACTION SLASH
+      "\u00d7" -> "x", // MULTIPLICATION SIGN
+      "\u2044" -> "/"  // FRACTION SLASH
     )
 
   }
