@@ -69,4 +69,12 @@ class TestStringUtils extends FlatSpec with Matchers {
     s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
   }
 
+  it should "replace arrows" in {
+    val s1 = "→ ← ↔ ⇒ ⇐ ⇔ » « – — 640×480 © ™ ® “He thought 'It's a man's world'…”"
+    val s2 = "-> <- <-> => <= <=> >> << -- --- 640x480 (c) (tm) (r) \"He thought 'It's a man's world'...\""
+    s1 should not equal s2
+    s1.normalizeUnicode should not equal s2.normalizeUnicode
+    s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
+  }
+
 }
