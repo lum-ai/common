@@ -239,7 +239,6 @@ object StringUtils {
       "\u00b4" -> "'",    // ACUTE ACCENT
       "\u00bb" -> ">>",   // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
       "\u00c6" -> "AE",   // LATIN CAPITAL LETTER AE
-      "\u00d7" -> "x",    // MULTIPLICATION SIGN
       "\u00e6" -> "ae",   // LATIN SMALL LETTER AE
       "\u0152" -> "OE",   // LATIN CAPITAL LIGATURE OE
       "\u0153" -> "oe",   // LATIN SMALL LIGATURE OE
@@ -272,7 +271,8 @@ object StringUtils {
     // these are some characters that we want to normalize
     // but we have to wait until after the nfkc normalization has concluded
     val postMapping: Map[String, String] = Map(
-      "\u2044" -> "/" // FRACTION SLASH
+      "\u00d7" -> "x", // MULTIPLICATION SIGN
+      "\u2044" -> "/"  // FRACTION SLASH
     )
 
   }
