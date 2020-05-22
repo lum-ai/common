@@ -239,14 +239,15 @@ object StringUtils {
       "\u00b4" -> "'",    // ACUTE ACCENT
       "\u00bb" -> ">>",   // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
       "\u00c6" -> "AE",   // LATIN CAPITAL LETTER AE
+      "\u00d7" -> "x",    // MULTIPLICATION SIGN
       "\u00e6" -> "ae",   // LATIN SMALL LETTER AE
       "\u0152" -> "OE",   // LATIN CAPITAL LIGATURE OE
       "\u0153" -> "oe",   // LATIN SMALL LIGATURE OE
       "\u0192" -> "f",    // LATIN SMALL LETTER F WITH HOOK
       "\u02c6" -> "^",    // MODIFIER LETTER CIRCUMFLEX ACCENT
       "\u02dc" -> "~",    // SMALL TILDE
-      "\u2013" -> "-",    // EN DASH
-      "\u2014" -> "-",    // EM DASH
+      "\u2013" -> "--",   // EN DASH
+      "\u2014" -> "---",  // EM DASH
       "\u2018" -> "'",    // LEFT SINGLE QUOTATION MARK
       "\u2019" -> "'",    // RIGHT SINGLE QUOTATION MARK
       "\u201a" -> "'",    // SINGLE LOW-9 QUOTATION MARK
@@ -259,6 +260,12 @@ object StringUtils {
       "\u203a" -> ">",    // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
       "\u2043" -> "-",    // HYPHEN BULLET
       "\u2122" -> "(TM)", // TRADE MARK SIGN
+      "\u2190" -> "<-",   // LEFTWARDS ARROW
+      "\u2192" -> "->",   // RIGHTWARDS ARROW
+      "\u2194" -> "<->",  // LEFT RIGHT ARROW
+      "\u21d0" -> "<=",   // LEFTWARDS DOUBLE ARROW
+      "\u21d2" -> "=>",   // RIGHTWARDS DOUBLE ARROW
+      "\u21d4" -> "<=>",  // LEFT RIGHT DOUBLE ARROW
       "\u25e6" -> "-"     // WHITE BULLET
     )
 
