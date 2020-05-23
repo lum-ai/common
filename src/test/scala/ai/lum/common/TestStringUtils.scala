@@ -36,6 +36,14 @@ class TestStringUtils extends FlatSpec with Matchers {
     mu2.normalizeUnicodeAggressively shouldEqual Mu.normalizeUnicodeAggressively
   }
 
+  it should "convert summation to sigma" in {
+    val s1 = "\u2211"
+    val s2 = "\u03a3"
+    s1 should not equal s2
+    s1.normalizeUnicode should not equal s2.normalizeUnicode
+    s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
+  }
+
   it should "support casefolding" in {
     val s1 = "\u00df"
     val s2 = "ss"
