@@ -215,7 +215,7 @@ object StringUtils {
       result = normalizer.normalize(result)
       // replace chars post normalization
       for ((k,v) <- postMapping) {
-        result = result.replaceAllLiterally(k, v)
+        result = result.replaceAllLiterally(k, normalizer.normalize(v))
       }
       // remove diacritics
       if (removeDiacritics) {
@@ -266,21 +266,23 @@ object StringUtils {
 
     // these are some characters that we want to normalize
     // but we have to wait until after the nfkc normalization has concluded
+    // https://unicode-org.github.io/cldr-staging/charts/37/supplemental/character_fallback_substitutions.html
     val postMapping: Map[String, String] = Map(
-      "\u0060" -> "'",   // GRAVE ACCENT
-      "\u00b4" -> "'",   // ACUTE ACCENT
-      "\u00d7" -> "x",   // MULTIPLICATION SIGN
-      "\u2013" -> "--",  // EN DASH
-      "\u2014" -> "---", // EM DASH
-      "\u2032" -> "'",   // PRIME
-      "\u2035" -> "'",   // REVERSED PRIME
-      "\u2044" -> "/",   // FRACTION SLASH
-      "\u2190" -> "<-",  // LEFTWARDS ARROW
-      "\u2192" -> "->",  // RIGHTWARDS ARROW
-      "\u3008" -> "<",   // LEFT ANGLE BRACKET
-      "\u3009" -> ">",   // LEFT ANGLE BRACKET
-      "\u300a" -> "<<",  // LEFT DOUBLE ANGLE BRACKET
-      "\u300b" -> ">>",  // LEFT DOUBLE ANGLE BRACKET
+      "\u0060" -> "'",      // GRAVE ACCENT
+      "\u00b4" -> "'",      // ACUTE ACCENT
+      "\u00d7" -> "x",      // MULTIPLICATION SIGN
+      "\u2013" -> "--",     // EN DASH
+      "\u2014" -> "---",    // EM DASH
+      "\u2032" -> "'",      // PRIME
+      "\u2035" -> "'",      // REVERSED PRIME
+      "\u2044" -> "/",      // FRACTION SLASH
+      "\u2190" -> "<-",     // LEFTWARDS ARROW
+      "\u2192" -> "->",     // RIGHTWARDS ARROW
+      "\u2211" -> "\u03a3", // N-ARY SUMMATION
+      "\u3008" -> "<",      // LEFT ANGLE BRACKET
+      "\u3009" -> ">",      // LEFT ANGLE BRACKET
+      "\u300a" -> "<<",     // LEFT DOUBLE ANGLE BRACKET
+      "\u300b" -> ">>",     // LEFT DOUBLE ANGLE BRACKET
     )
 
   }
