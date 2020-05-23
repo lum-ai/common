@@ -206,10 +206,6 @@ object StringUtils {
     /** Unicode normalization */
     def normalizeUnicode(casefold: Boolean, removeDiacritics: Boolean, preMapping: Map[String, String], postMapping: Map[String, String]): String = {
       var result = str
-      // remove diacritics
-      if (removeDiacritics) {
-        result = result.stripAccents
-      }
       // replace chars pre normalization
       for ((k,v) <- preMapping) {
         result = result.replaceAllLiterally(k, v)
@@ -220,6 +216,13 @@ object StringUtils {
       // replace chars post normalization
       for ((k,v) <- postMapping) {
         result = result.replaceAllLiterally(k, v)
+      }
+      // remove diacritics
+      if (removeDiacritics) {
+        result = result.stripAccents
+        // stripAccents converts to NFD, so convert back to NFKC
+        // this may be unnecessary but better safe than sorry
+        normalizer.normalize(result)
       }
       // return result
       result
@@ -232,11 +235,9 @@ object StringUtils {
     // there are some characters that we want to normalize
     // before the nfkc normalization has taken place
     val preMapping: Map[String, String] = Map(
-      "\u0060" -> "'",    // GRAVE ACCENT
       "\u00a9" -> "(C)",  // COPYRIGHT SIGN
       "\u00ab" -> "<<",   // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
       "\u00ae" -> "(R)",  // REGISTERED SIGN
-      "\u00b4" -> "'",    // ACUTE ACCENT
       "\u00bb" -> ">>",   // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
       "\u00c6" -> "AE",   // LATIN CAPITAL LETTER AE
       "\u00e6" -> "ae",   // LATIN SMALL LETTER AE
@@ -244,9 +245,6 @@ object StringUtils {
       "\u0153" -> "oe",   // LATIN SMALL LIGATURE OE
       "\u0192" -> "f",    // LATIN SMALL LETTER F WITH HOOK
       "\u02c6" -> "^",    // MODIFIER LETTER CIRCUMFLEX ACCENT
-      "\u02dc" -> "~",    // SMALL TILDE
-      "\u2013" -> "--",   // EN DASH
-      "\u2014" -> "---",  // EM DASH
       "\u2018" -> "'",    // LEFT SINGLE QUOTATION MARK
       "\u2019" -> "'",    // RIGHT SINGLE QUOTATION MARK
       "\u201a" -> "'",    // SINGLE LOW-9 QUOTATION MARK
@@ -259,8 +257,6 @@ object StringUtils {
       "\u203a" -> ">",    // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
       "\u2043" -> "-",    // HYPHEN BULLET
       "\u2122" -> "(TM)", // TRADE MARK SIGN
-      "\u2190" -> "<-",   // LEFTWARDS ARROW
-      "\u2192" -> "->",   // RIGHTWARDS ARROW
       "\u2194" -> "<->",  // LEFT RIGHT ARROW
       "\u21d0" -> "<=",   // LEFTWARDS DOUBLE ARROW
       "\u21d2" -> "=>",   // RIGHTWARDS DOUBLE ARROW
@@ -271,8 +267,20 @@ object StringUtils {
     // these are some characters that we want to normalize
     // but we have to wait until after the nfkc normalization has concluded
     val postMapping: Map[String, String] = Map(
-      "\u00d7" -> "x", // MULTIPLICATION SIGN
-      "\u2044" -> "/"  // FRACTION SLASH
+      "\u0060" -> "'",   // GRAVE ACCENT
+      "\u00b4" -> "'",   // ACUTE ACCENT
+      "\u00d7" -> "x",   // MULTIPLICATION SIGN
+      "\u2013" -> "--",  // EN DASH
+      "\u2014" -> "---", // EM DASH
+      "\u2032" -> "'",   // PRIME
+      "\u2035" -> "'",   // REVERSED PRIME
+      "\u2044" -> "/",   // FRACTION SLASH
+      "\u2190" -> "<-",  // LEFTWARDS ARROW
+      "\u2192" -> "->",  // RIGHTWARDS ARROW
+      "\u3008" -> "<",   // LEFT ANGLE BRACKET
+      "\u3009" -> ">",   // LEFT ANGLE BRACKET
+      "\u300a" -> "<<",  // LEFT DOUBLE ANGLE BRACKET
+      "\u300b" -> ">>",  // LEFT DOUBLE ANGLE BRACKET
     )
 
   }
