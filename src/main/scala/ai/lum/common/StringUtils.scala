@@ -222,7 +222,7 @@ object StringUtils {
         result = result.stripAccents
         // stripAccents converts to NFD, so convert back to NFKC
         // this may be unnecessary but better safe than sorry
-        normalizer.normalize(result)
+        result = normalizer.normalize(result)
       }
       // return result
       result
