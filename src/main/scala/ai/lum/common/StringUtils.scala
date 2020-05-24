@@ -232,58 +232,61 @@ object StringUtils {
 
   object LumAICommonStringWrapper {
 
-    // there are some characters that we want to normalize
-    // before the nfkc normalization has taken place
+    // There are some characters that we want to normalize
+    // before the NFKC normalization has taken place.
+    // For example, the string "catchphrase™" would become
+    // "catchphraseTM" after the NFKC normalization.
+    // Instead we want to convert it to "catchphrase(TM)".
     val preMapping: Map[String, String] = Map(
-      "\u00a9" -> "(C)",  // COPYRIGHT SIGN
-      "\u00ab" -> "<<",   // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
-      "\u00ae" -> "(R)",  // REGISTERED SIGN
-      "\u00bb" -> ">>",   // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
-      "\u00c6" -> "AE",   // LATIN CAPITAL LETTER AE
-      "\u00e6" -> "ae",   // LATIN SMALL LETTER AE
-      "\u0152" -> "OE",   // LATIN CAPITAL LIGATURE OE
-      "\u0153" -> "oe",   // LATIN SMALL LIGATURE OE
-      "\u0192" -> "f",    // LATIN SMALL LETTER F WITH HOOK
-      "\u02c6" -> "^",    // MODIFIER LETTER CIRCUMFLEX ACCENT
-      "\u2018" -> "'",    // LEFT SINGLE QUOTATION MARK
-      "\u2019" -> "'",    // RIGHT SINGLE QUOTATION MARK
-      "\u201a" -> "'",    // SINGLE LOW-9 QUOTATION MARK
-      "\u201c" -> "\"",   // LEFT DOUBLE QUOTATION MARK
-      "\u201d" -> "\"",   // RIGHT DOUBLE QUOTATION MARK
-      "\u201e" -> "\"",   // DOUBLE LOW-9 QUOTATION MARK
-      "\u2022" -> "-",    // BULLET
-      "\u2023" -> "-",    // TRIANGULAR BULLET
-      "\u2039" -> "<",    // SINGLE LEFT-POINTING ANGLE QUOTATION MARK
-      "\u203a" -> ">",    // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
-      "\u2043" -> "-",    // HYPHEN BULLET
-      "\u2122" -> "(TM)", // TRADE MARK SIGN
-      "\u2194" -> "<->",  // LEFT RIGHT ARROW
-      "\u21d0" -> "<=",   // LEFTWARDS DOUBLE ARROW
-      "\u21d2" -> "=>",   // RIGHTWARDS DOUBLE ARROW
-      "\u21d4" -> "<=>",  // LEFT RIGHT DOUBLE ARROW
-      "\u25e6" -> "-"     // WHITE BULLET
+      "\u00a9" -> "(C)", // COPYRIGHT SIGN
+      "\u00ae" -> "(R)", // REGISTERED SIGN
+      "\u2122" -> "(TM)" // TRADE MARK SIGN
     )
 
-    // these are some characters that we want to normalize
-    // but we have to wait until after the nfkc normalization has concluded
+    // These are some characters that we want to normalize
+    // but we have to wait until after the NFKC normalization has concluded.
+    // If there is no reason to map a character before the NFKC normalization then do it here.
     // https://unicode-org.github.io/cldr-staging/charts/37/supplemental/character_fallback_substitutions.html
     val postMapping: Map[String, String] = Map(
-      "\u0060" -> "'",      // GRAVE ACCENT
-      "\u00b4" -> "'",      // ACUTE ACCENT
-      "\u00d7" -> "x",      // MULTIPLICATION SIGN
-      "\u2010" -> "-",      // HYPHEN
-      "\u2013" -> "--",     // EN DASH
-      "\u2014" -> "---",    // EM DASH
-      "\u2032" -> "'",      // PRIME
-      "\u2035" -> "'",      // REVERSED PRIME
-      "\u2044" -> "/",      // FRACTION SLASH
-      "\u2190" -> "<-",     // LEFTWARDS ARROW
-      "\u2192" -> "->",     // RIGHTWARDS ARROW
-      "\u2211" -> "\u03a3", // N-ARY SUMMATION
-      "\u3008" -> "<",      // LEFT ANGLE BRACKET
-      "\u3009" -> ">",      // LEFT ANGLE BRACKET
-      "\u300a" -> "<<",     // LEFT DOUBLE ANGLE BRACKET
-      "\u300b" -> ">>"      // LEFT DOUBLE ANGLE BRACKET
+      "\u0060" -> "'",   // GRAVE ACCENT
+      "\u00ab" -> "<<",  // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+      "\u00b4" -> "'",   // ACUTE ACCENT
+      "\u00bb" -> ">>",  // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+      "\u00c6" -> "AE",  // LATIN CAPITAL LETTER AE
+      "\u00d7" -> "x",   // MULTIPLICATION SIGN
+      "\u00e6" -> "ae",  // LATIN SMALL LETTER AE
+      "\u0152" -> "OE",  // LATIN CAPITAL LIGATURE OE
+      "\u0153" -> "oe",  // LATIN SMALL LIGATURE OE
+      "\u0192" -> "f",   // LATIN SMALL LETTER F WITH HOOK
+      "\u02c6" -> "^",   // MODIFIER LETTER CIRCUMFLEX ACCENT
+      "\u2010" -> "-",   // HYPHEN
+      "\u2013" -> "--",  // EN DASH
+      "\u2014" -> "---", // EM DASH
+      "\u2018" -> "'",   // LEFT SINGLE QUOTATION MARK
+      "\u2019" -> "'",   // RIGHT SINGLE QUOTATION MARK
+      "\u201a" -> "'",   // SINGLE LOW-9 QUOTATION MARK
+      "\u201c" -> "\"",  // LEFT DOUBLE QUOTATION MARK
+      "\u201d" -> "\"",  // RIGHT DOUBLE QUOTATION MARK
+      "\u201e" -> "\"",  // DOUBLE LOW-9 QUOTATION MARK
+      "\u2022" -> "-",   // BULLET
+      "\u2023" -> "-",   // TRIANGULAR BULLET
+      "\u2032" -> "'",   // PRIME
+      "\u2035" -> "'",   // REVERSED PRIME
+      "\u2039" -> "<",   // SINGLE LEFT-POINTING ANGLE QUOTATION MARK
+      "\u203a" -> ">",   // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+      "\u2043" -> "-",   // HYPHEN BULLET
+      "\u2044" -> "/",   // FRACTION SLASH
+      "\u2190" -> "<-",  // LEFTWARDS ARROW
+      "\u2192" -> "->",  // RIGHTWARDS ARROW
+      "\u2194" -> "<->", // LEFT RIGHT ARROW
+      "\u21d0" -> "<=",  // LEFTWARDS DOUBLE ARROW
+      "\u21d2" -> "=>",  // RIGHTWARDS DOUBLE ARROW
+      "\u21d4" -> "<=>", // LEFT RIGHT DOUBLE ARROW
+      "\u25e6" -> "-",   // WHITE BULLET
+      "\u3008" -> "<",   // LEFT ANGLE BRACKET
+      "\u3009" -> ">",   // LEFT ANGLE BRACKET
+      "\u300a" -> "<<",  // LEFT DOUBLE ANGLE BRACKET
+      "\u300b" -> ">>"   // LEFT DOUBLE ANGLE BRACKET
     )
 
   }
