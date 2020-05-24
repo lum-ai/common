@@ -282,7 +282,7 @@ object StringUtils {
       "\u3008" -> "<",      // LEFT ANGLE BRACKET
       "\u3009" -> ">",      // LEFT ANGLE BRACKET
       "\u300a" -> "<<",     // LEFT DOUBLE ANGLE BRACKET
-      "\u300b" -> ">>",     // LEFT DOUBLE ANGLE BRACKET
+      "\u300b" -> ">>"      // LEFT DOUBLE ANGLE BRACKET
     )
 
   }
