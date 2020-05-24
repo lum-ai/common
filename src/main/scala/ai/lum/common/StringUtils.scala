@@ -271,6 +271,7 @@ object StringUtils {
       "\u0060" -> "'",      // GRAVE ACCENT
       "\u00b4" -> "'",      // ACUTE ACCENT
       "\u00d7" -> "x",      // MULTIPLICATION SIGN
+      "\u2010" -> "-",      // HYPHEN
       "\u2013" -> "--",     // EN DASH
       "\u2014" -> "---",    // EM DASH
       "\u2032" -> "'",      // PRIME
