@@ -283,7 +283,11 @@ object StringUtils {
       "\u21d2" -> "=>",  // RIGHTWARDS DOUBLE ARROW
       "\u21d4" -> "<=>", // LEFT RIGHT DOUBLE ARROW
       "\u2212" -> "-",   // MINUS SIGN
-      "\u25e6" -> "-"    // WHITE BULLET
+      "\u25e6" -> "-",   // WHITE BULLET
+      "\u3008" -> "<",   // LEFT ANGLE BRACKET
+      "\u3009" -> ">",   // RIGHT ANGLE BRACKET
+      "\u300a" -> "<<",  // LEFT DOUBLE ANGLE BRACKET
+      "\u300b" -> ">>"   // RIGHT DOUBLE ANGLE BRACKET
     )
 
   }
