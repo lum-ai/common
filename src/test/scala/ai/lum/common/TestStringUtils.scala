@@ -76,6 +76,14 @@ class TestStringUtils extends FlatSpec with Matchers {
     s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
   }
 
+  it should "normalize minus" in {
+    val s1 = "-"
+    val s2 = "\u2212"
+    s1 should not equal s2
+    s1.normalizeUnicode should not equal s2.normalizeUnicode
+    s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
+  }
+
   it should "normalize «\u1d2d»" in {
     val AE = "\u00c6"
     val AE_mod = "\u1d2d"
