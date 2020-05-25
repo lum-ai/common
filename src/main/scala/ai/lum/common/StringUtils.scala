@@ -234,8 +234,8 @@ object StringUtils {
 
     // There are some characters that we want to normalize
     // before the NFKC normalization has taken place.
-    // For example, the string "catchphrase™" would become
-    // "catchphraseTM" after the NFKC normalization.
+    // For example, the string catchphrase™ would become
+    // catchphraseTM after the NFKC normalization.
     // Instead we want to convert it to "catchphrase(TM)".
     val preMapping: Map[String, String] = Map(
       "\u00a9" -> "(C)", // COPYRIGHT SIGN
