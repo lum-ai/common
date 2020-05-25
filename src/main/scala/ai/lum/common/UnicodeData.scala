@@ -21,8 +21,10 @@ object UnicodeData {
   }
 
   def getCategory(c: Int, short: Boolean = false): String = {
+    val nameChoice =
+      if (short) UProperty.NameChoice.SHORT
+      else UProperty.NameChoice.LONG
     val category = UProperty.GENERAL_CATEGORY_MASK
-    val nameChoice = if (short) UProperty.NameChoice.SHORT else UProperty.NameChoice.LONG
     val value = UCharacter.getIntPropertyValue(c, category)
     UCharacter.getPropertyValueName(category, value, nameChoice)
   }
