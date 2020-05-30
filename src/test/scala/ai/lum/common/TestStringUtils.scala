@@ -2,6 +2,7 @@ package ai.lum.common
 
 import org.scalatest._
 import StringUtils._
+import DisplayUtils._
 
 class TestStringUtils extends FlatSpec with Matchers {
 
@@ -52,12 +53,44 @@ class TestStringUtils extends FlatSpec with Matchers {
     s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
   }
 
+  it should "remove diacritics from composed glyphs" in {
+    val s1 = "\u01c6"
+    val s2 = "dz"
+    s1 should not equal s2
+    s1.normalizeUnicode should not equal s2.normalizeUnicode
+    s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
+  }
+
   it should "normalize backticks" in {
     val s1 = "Nelson Mandela's health `unstable'"
     val s2 = "Nelson Mandela's health 'unstable'"
     s1 should not equal s2
     s1.normalizeUnicode should not equal s2.normalizeUnicode
     s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
+  }
+
+  it should "normalize hyphens" in {
+    val s1 = "-"
+    val s2 = "\u2010"
+    s1 should not equal s2
+    s1.normalizeUnicode should not equal s2.normalizeUnicode
+    s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
+  }
+
+  it should "normalize minus" in {
+    val s1 = "-"
+    val s2 = "\u2212"
+    s1 should not equal s2
+    s1.normalizeUnicode should not equal s2.normalizeUnicode
+    s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
+  }
+
+  it should s"normalize ${"\u00c6".display} and ${"\u1d2d".display}" in {
+    val AE = "\u00c6"
+    val AE_mod = "\u1d2d"
+    AE should not equal AE_mod
+    AE.normalizeUnicode shouldEqual AE_mod.normalizeUnicode
+    AE.normalizeUnicodeAggressively shouldEqual AE_mod.normalizeUnicodeAggressively
   }
 
   it should "replace characters" in {
