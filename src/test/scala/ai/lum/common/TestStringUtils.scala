@@ -1,8 +1,8 @@
 package ai.lum.common
 
 import org.scalatest._
-import ai.lum.common.DisplayUtils._
 import StringUtils._
+import DisplayUtils._
 
 class TestStringUtils extends FlatSpec with Matchers {
 
