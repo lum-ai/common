@@ -1,6 +1,7 @@
 package ai.lum.common
 
 import org.scalatest._
+import ai.lum.common.DisplayUtils._
 import StringUtils._
 
 class TestStringUtils extends FlatSpec with Matchers {
@@ -84,7 +85,7 @@ class TestStringUtils extends FlatSpec with Matchers {
     s1.normalizeUnicodeAggressively shouldEqual s2.normalizeUnicodeAggressively
   }
 
-  it should "normalize «\u1d2d»" in {
+  it should s"normalize ${"\u00c6".display} and ${"\u1d2d".display}" in {
     val AE = "\u00c6"
     val AE_mod = "\u1d2d"
     AE should not equal AE_mod
