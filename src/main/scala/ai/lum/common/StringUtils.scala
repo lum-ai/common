@@ -43,10 +43,7 @@ object StringUtils {
      *  in that it adds backslashes to regex metacharacters instead
      *  of surrounding the string with \Q and \E
      */
-    def escapeRegex: String = {
-      val metacharacters = "<([{\\^-=$!|]})?*+.>"
-      str.map(c => if (metacharacters contains c) s"\\$c" else c).mkString
-    }
+    def escapeRegex: String = RegexUtils.quote(str)
 
     /**
      * Returns a String value for a CSV column enclosed in double quotes,
