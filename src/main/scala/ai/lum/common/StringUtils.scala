@@ -17,11 +17,12 @@
 package ai.lum.common
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ArrayBuilder
 import org.apache.commons.lang3.{ StringUtils => ApacheStringUtils }
 import org.apache.commons.text.WordUtils
 import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.StringSubstitutor
-import com.ibm.icu.text.Normalizer2
+import com.ibm.icu.text.{ Normalizer2, BreakIterator }
 
 object StringUtils {
 
@@ -189,6 +190,66 @@ object StringUtils {
 
     /** Right pad a String with a specified String. The String is padded to the specified size. */
     def rightPad(size: Int, padStr: String): String = ApacheStringUtils.rightPad(str, size, padStr)
+
+    /**
+     * Segments string into "words" according to the guidelines specified here: https://unicode.org/reports/tr29/
+     * Each word is represented as a tuple (word, start_offset, end_offset).
+     */
+    def words: Array[(String, Int, Int)] = {
+      val wb = BreakIterator.getWordInstance()
+      wb.setText(str)
+      val builder = new ArrayBuilder.ofRef[(String, Int, Int)]
+      var start = wb.first()
+      var end = wb.next()
+      while (end != BreakIterator.DONE) {
+        val word = str.substring(start, end)
+        if (!ApacheStringUtils.isWhitespace(word)) {
+          builder += Tuple3(word, start, end)
+        }
+        start = end
+        end = wb.next()
+      }
+      builder.result()
+    }
+
+    /**
+     * Segments string into "sentences" according to the guidelines specified here: https://unicode.org/reports/tr29/
+     * Each sentence is represented as a tuple (sentence, start_offset, end_offset).
+     */
+    def sentences: Array[(String, Int, Int)] = {
+      val sb = BreakIterator.getSentenceInstance()
+      sb.setText(str)
+      val builder = new ArrayBuilder.ofRef[(String, Int, Int)]
+      var start = sb.first()
+      var end = sb.next()
+      while (end != BreakIterator.DONE) {
+        val sentence = str.substring(start, end)
+        builder += Tuple3(sentence, start, end)
+        start = end
+        end = sb.next()
+      }
+      builder.result()
+    }
+
+    /**
+     * Segments string into "graphemes" (what a person would consider a character)
+     * according to the guidelines specified here: https://unicode.org/reports/tr29/
+     * Each grapheme is represented as a tuple (grapheme, start_offset, end_offset).
+     */
+    def graphemes: Array[(String, Int, Int)] = {
+      val gb = BreakIterator.getCharacterInstance()
+      gb.setText(str)
+      val builder = new ArrayBuilder.ofRef[(String, Int, Int)]
+      var start = gb.first()
+      var end = gb.next()
+      while (end != BreakIterator.DONE) {
+        val grapheme = str.substring(start, end)
+        builder += Tuple3(grapheme, start, end)
+        start = end
+        end = gb.next()
+      }
+      builder.result()
+    }
 
     /** Canonical unicode representation.
      *  Uses NFC as recommended by the W3C in https://www.w3.org/TR/charmod-norm/
