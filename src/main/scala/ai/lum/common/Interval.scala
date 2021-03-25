@@ -447,7 +447,7 @@ object Interval {
   object Empty extends Interval(0, 0) {
     override def toString: String = "{}"
     def unapply(interval: Interval): Option[Unit] = interval match {
-      case `empty` => Some(())
+      case interval: Interval if interval.isEmpty => Some(())
       case _ => None
     }
   }

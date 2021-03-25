@@ -1,9 +1,8 @@
 package ai.lum.common
 
-import org.scalatest._
 import TryWithResources.using
 
-class TestTryWithResources extends FlatSpec with Matchers {
+class TestTryWithResources extends Test {
 
   import TestTryWithResources._
 

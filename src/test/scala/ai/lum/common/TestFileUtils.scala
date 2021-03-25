@@ -1,10 +1,9 @@
 package ai.lum.common
 
 import java.io.File
-import org.scalatest._
 import FileUtils._
 
-class TestFileUtils extends FlatSpec with Matchers {
+class TestFileUtils extends Test {
 
   "FileUtils" should "write a string to a file" in {
     val file = File.createTempFile("TestFileUtils", ".txt")

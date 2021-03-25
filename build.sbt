@@ -4,20 +4,34 @@ name := "common"
 
 organization := "ai.lum"
 
-scalaVersion := "2.12.10"
+val scala11 = "2.11.12" // up to 2.11.12
+val scala12 = "2.12.13" // up to 2.12.13
+val scala13 = "2.13.5"  // up to 2.13.5
 
-crossScalaVersions := Seq("2.11.12", "2.12.10")
+crossScalaVersions := Seq(scala11, scala12, scala13)
+scalaVersion := crossScalaVersions.value.last
 
-scalacOptions ++= Seq(
-  "-encoding", "utf-8",
-  "-deprecation",
-  "-explaintypes",
-  "-feature",
-  "-unchecked",
-  "-Xfatal-warnings",
-  "-Xfuture",
-  "-Xlint",
-)
+scalacOptions ++= {
+  val generalOptions = Seq(
+    "-encoding", "utf-8",
+    "-explaintypes",
+    "-feature",
+    "-unchecked"
+  )
+  val specificOptions = {
+    val (major, minor) = CrossVersion.partialVersion(scalaVersion.value).get
+    if (major < 2 || (major == 2 && minor <= 12))
+      Seq(
+        "-deprecation",     // The large number of these in scala13 shall remain hidden.
+        "-Xfatal-warnings", // There are warnings for unused imports in scala13.
+        "-Xfuture",         // No longer available for scala13.
+        "-Xlint",
+      )
+    else Seq.empty
+  }
+
+  generalOptions ++ specificOptions
+}
 
 // the console can't really cope with some scalac flags
 scalacOptions in (Compile, console) --= Seq("-Xlint", "-Xfatal-warnings")
@@ -26,12 +40,12 @@ scalacOptions in (Compile, console) --= Seq("-Xlint", "-Xfatal-warnings")
 scalacOptions in (Compile, doc) += "-no-link-warnings" // suppresses problems with scaladoc @throws links
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-  "com.typesafe" % "config" % "1.3.3",
+  "org.scalatest"     %% "scalatest"     % "3.2.2" % "test",
+  "com.typesafe"       % "config"        % "1.3.3",
   "org.apache.commons" % "commons-lang3" % "3.9",
-  "org.apache.commons" % "commons-text" % "1.7",
-  "commons-io" % "commons-io" % "2.6",
-  "com.ibm.icu" % "icu4j" % "66.1",
+  "org.apache.commons" % "commons-text"  % "1.7",
+  "commons-io"         % "commons-io"    % "2.6",
+  "com.ibm.icu"        % "icu4j"         % "66.1",
 )
 
 

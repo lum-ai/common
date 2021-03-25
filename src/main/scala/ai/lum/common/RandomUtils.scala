@@ -188,13 +188,13 @@ object RandomUtils {
       // fill the reservoir
       for (_ <- 1 to k) {
         if (!iter.hasNext) sys.error("sample size larger than population")
-        reservoir += iter.next
+        reservoir += iter.next()
       }
       var i = k
       // replace elements with gradually decreasing probability
       while (iter.hasNext) {
         i += 1
-        val x = iter.next
+        val x = iter.next()
         val j = random.nextInt(i)
         if (j < k) reservoir(j) = x
       }
@@ -219,14 +219,14 @@ object RandomUtils {
           // reservoir sampling with replacement
           // basically, this code does `k` reservoir samples of size 1
           val iter = xs.toIterator
-          var x = iter.next
+          var x = iter.next()
           // fill all reservoirs with the same value
           val reservoirs = ArrayBuffer.fill(k)(x)
           var i = 1
           // replace elements with gradually decreasing probability
           while (iter.hasNext) {
             i += 1
-            x = iter.next
+            x = iter.next()
             for (j <- 0 until k) {
               val r = random.nextInt(i)
               // each reservoir is of size 1, so the random number
