@@ -20,12 +20,14 @@ import scala.util.Random
 import scala.reflect.ClassTag
 import scala.language.higherKinds
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.generic.CanBuildFrom
 import org.apache.commons.lang3.RandomStringUtils
 
 object RandomUtils {
 
   implicit class LumAICommonRandomWrapper(val random: Random) extends AnyVal {
+    // These depend on Scala version and may come from different directories.
+    type OnePass[+A] = RandomUtilsTypes.OnePass[A]
+    type BuildableFrom[-From, -A, +C] = RandomUtilsTypes.BuildableFrom[From, A, C]
 
     /** Creates an array of random bytes. */
     def nextBytes(count: Int): Array[Byte] = {
@@ -157,7 +159,7 @@ object RandomUtils {
 
     def choice[A](xs: Array[A]): A = choice(xs.toSeq)
 
-    def choice[A](xs: TraversableOnce[A]): A = {
+    def choice[A](xs: OnePass[A]): A = {
       require(xs.nonEmpty, "collection is empty")
       xs match {
         case indexed: IndexedSeq[A] => indexed(random.nextInt(indexed.size))
@@ -171,7 +173,7 @@ object RandomUtils {
       sample(xs.toSeq, k, withReplacement).toArray
     }
 
-    def sample[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int, withReplacement: Boolean = false)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+    def sample[A, CC[X] <: OnePass[X]](xs: CC[A], k: Int, withReplacement: Boolean = false)(implicit cbf: BuildableFrom[CC[A], A, CC[A]]): CC[A] = {
       if (withReplacement) {
         sampleWithReplacement(xs, k)
       } else {
@@ -180,7 +182,7 @@ object RandomUtils {
     }
 
     // reservoir sampling
-    private def sampleWithoutReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+    private def sampleWithoutReplacement[A, CC[X] <: OnePass[X]](xs: CC[A], k: Int)(implicit cbf: BuildableFrom[CC[A], A, CC[A]]): CC[A] = {
       require(xs.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
       val reservoir = new ArrayBuffer[A](k)
@@ -204,7 +206,7 @@ object RandomUtils {
       builder.result()
     }
 
-    private def sampleWithReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+    private def sampleWithReplacement[A, CC[X] <: OnePass[X]](xs: CC[A], k: Int)(implicit cbf: BuildableFrom[CC[A], A, CC[A]]): CC[A] = {
       require(xs.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
       val builder = cbf(xs)
