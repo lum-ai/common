@@ -81,6 +81,27 @@ object FileUtils {
 
     def touch(): Unit = IOFileUtils.touch(file)
 
+    /** Returns a new File that is under the current directory (File) */
+    def mkChild(childName: String): File = {
+      require(file.isDirectory, s"${file.getCanonicalPath()} is not a directory")
+      new File(file, childName)
+    }
+
+    /** Returns a new File that is inside the same parent directory as the current File */
+    def mkSibling(siblingName: String): File = {
+      val parent = file.getParentFile
+      new File(parent, siblingName)
+    }
+
+    /** Returns a new File in a parallel directory, where the parallelness is
+     * determined by what is replaced in the path.
+     * NOTE: that the replacement is with the First occurrence of the curr String */
+    def mkParallel(curr: String, replacement: String): File = {
+      val origPath = file.getAbsolutePath
+      require(origPath.contains(curr))
+      new File(origPath.replaceFirst(curr, replacement))
+    }
+
     /** Returns the size of the file (in bytes) */
     def size: Long = IOFileUtils.sizeOf(file)
 
