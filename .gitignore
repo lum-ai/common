@@ -13,7 +13,12 @@ project/boot/
 project/plugins/project/
 
 # Scala-IDE specific
+.bloop/
+.idea/
+.metals/
+metals.sbt
 .scala_dependencies
+.vscode/
 .worksheet
 
 # ENSIME specific
