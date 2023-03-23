@@ -396,7 +396,7 @@ object Interval {
   def union(col: Seq[Interval]): Interval = {
     val sorted = col.sorted
     try {
-      sorted.reduceRight(_ union _)
+      sorted.reduceLeft(_ union _)
     } catch {
       case _: IllegalArgumentException =>
         throw new IllegalArgumentException("gap in intervals: " + sorted)
