@@ -11,8 +11,8 @@ val scala31  = "3.1.3"   // up to 3.1.3
 val scala33  = "3.3.7"   // up to 3.3.7
 val scala3   = scala33
 
-ThisBuild / crossScalaVersions := Seq(scala33, scala212, scala211, scala213)
-ThisBuild / scalaVersion := scala33
+ThisBuild / crossScalaVersions := Seq(scala33, scala212, scala211, scala213, scala31)
+ThisBuild / scalaVersion := scala31
 
 scalacOptions ++= {
   val deprecationOpt = CrossVersion.partialVersion(scalaVersion.value) match {
