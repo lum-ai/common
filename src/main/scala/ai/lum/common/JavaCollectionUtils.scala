@@ -17,9 +17,8 @@
 package ai.lum.common
 
 import java.util.Collection
-import scala.language.higherKinds
 import scala.collection.mutable.Buffer
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable.StringBuilder
 
 object JavaCollectionUtils {
@@ -101,7 +100,7 @@ object JavaCollectionUtils {
 
     def toIterable: Iterable[A] = collection.asScala
 
-    def toIterator: Iterator[A] = collection.asScala.toIterator
+    def toIterator: Iterator[A] = collection.asScala.iterator
 
     def toList: List[A] = collection.asScala.toList
 

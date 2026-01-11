@@ -18,7 +18,6 @@ package ai.lum.common
 
 import scala.util.Random
 import scala.reflect.ClassTag
-import scala.language.higherKinds
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.generic.CanBuildFrom
 import org.apache.commons.lang3.RandomStringUtils
@@ -155,16 +154,21 @@ object RandomUtils {
       random.shuffle(xs.toSeq).toArray
     }
 
-    def choice[A](xs: Array[A]): A = choice(xs.toSeq)
+    def choice[A](xs: Array[A]): A = choice(xs.toIndexedSeq)
 
-    def choice[A](xs: TraversableOnce[A]): A = {
+    // No CanBuildFrom is required for this one.
+    def choice[A](xs: IndexedSeq[A]): A = {
       require(xs.nonEmpty, "collection is empty")
-      xs match {
-        case indexed: IndexedSeq[A] => indexed(random.nextInt(indexed.size))
-        case _ => sampleWithoutReplacement(xs, 1).toIterator.next
-      }
+      xs(random.nextInt(xs.size))
     }
 
+    // This is the very most general case.
+    def choice[A, CC[X] <: TraversableOnce[X]](xs: CC[A])(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): A = {
+      require(xs.toIterator.nonEmpty, "collection is empty")
+      sampleWithoutReplacement(xs, 1).toIterator.next
+    }
+
+    // This is duplicated so that only a single sample method uses default arguments are required by the compiler.
     def sample[A: ClassTag](xs: Array[A], k: Int): Array[A] = sample(xs, k, false)
 
     def sample[A: ClassTag](xs: Array[A], k: Int, withReplacement: Boolean): Array[A] = {
@@ -181,20 +185,20 @@ object RandomUtils {
 
     // reservoir sampling
     private def sampleWithoutReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
-      require(xs.nonEmpty, "population is empty")
+      require(xs.toIterator.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
       val reservoir = new ArrayBuffer[A](k)
       val iter = xs.toIterator
       // fill the reservoir
       for (_ <- 1 to k) {
         if (!iter.hasNext) sys.error("sample size larger than population")
-        reservoir += iter.next
+        reservoir += iter.next()
       }
       var i = k
       // replace elements with gradually decreasing probability
       while (iter.hasNext) {
         i += 1
-        val x = iter.next
+        val x = iter.next()
         val j = random.nextInt(i)
         if (j < k) reservoir(j) = x
       }
@@ -205,28 +209,28 @@ object RandomUtils {
     }
 
     private def sampleWithReplacement[A, CC[X] <: TraversableOnce[X]](xs: CC[A], k: Int)(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
-      require(xs.nonEmpty, "population is empty")
+      require(xs.toIterator.nonEmpty, "population is empty")
       require(k >= 0, "sample size must be non-negative")
       val builder = cbf(xs)
       xs match {
-        case xs: IndexedSeq[A] =>
+        case morexs: IndexedSeq[A] =>
           // if traversable is indexed then generate k random indices
-          val n = xs.size
+          val n = morexs.size
           for (_ <- 0 until k) {
-            builder += xs(random.nextInt(n))
+            builder += morexs(random.nextInt(n))
           }
         case _ =>
           // reservoir sampling with replacement
           // basically, this code does `k` reservoir samples of size 1
           val iter = xs.toIterator
-          var x = iter.next
+          var x = iter.next()
           // fill all reservoirs with the same value
           val reservoirs = ArrayBuffer.fill(k)(x)
           var i = 1
           // replace elements with gradually decreasing probability
           while (iter.hasNext) {
             i += 1
-            x = iter.next
+            x = iter.next()
             for (j <- 0 until k) {
               val r = random.nextInt(i)
               // each reservoir is of size 1, so the random number

@@ -4,34 +4,54 @@ name := "common"
 
 organization := "ai.lum"
 
-scalaVersion := "2.12.10"
+val scala211 = "2.11.12" // up to 2.11.12
+val scala212 = "2.12.21" // up to 2.12.21
+val scala213 = "2.13.17" // up to 2.13.17
+val scala30  = "3.0.2"   // up to 3.0.2
+val scala31  = "3.1.3"   // up to 3.1.3
+val scala32  = "3.2.2"   // up to 3.2.2
+val scala33  = "3.3.7"   // up to 3.3.17
+val scala3   = scala31
 
-crossScalaVersions := Seq("2.11.12", "2.12.10")
+ThisBuild / crossScalaVersions := Seq(scala212, scala211, scala213)
+// ThisBuild / scalaVersion := scala211
+ThisBuild / scalaVersion := scala212
 
-scalacOptions ++= Seq(
-  "-encoding", "utf-8",
-  "-deprecation",
-  "-explaintypes",
-  "-feature",
-  "-unchecked",
-  "-Xfatal-warnings",
-  "-Xfuture",
-  "-Xlint",
-)
+scalacOptions ++= {
+  val higherKindsOpt = CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, minor)) if minor < 13 => Some("-language:higherKinds")
+    case _ => None
+  }
+  val futureOpt = CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, minor)) if minor < 13 => Some("-Xfuture")
+    case _ => None
+  }
+
+    Seq(
+    "-encoding", "utf-8",
+    "-deprecation",
+    "-explaintypes",
+    "-feature",
+    "-unchecked",
+    "-Xfatal-warnings",
+    "-Xlint"
+  ) ++ higherKindsOpt ++ futureOpt
+}
 
 // the console can't really cope with some scalac flags
-scalacOptions in (Compile, console) --= Seq("-Xlint", "-Xfatal-warnings")
+Compile / console / scalacOptions --= Seq("-Xlint", "-Xfatal-warnings")
 
 // scope scalacOptions to the doc task to configure scaladoc
-scalacOptions in (Compile, doc) += "-no-link-warnings" // suppresses problems with scaladoc @throws links
+Compile / doc / scalacOptions += "-no-link-warnings" // suppresses problems with scaladoc @throws links
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-  "com.typesafe" % "config" % "1.3.3",
-  "org.apache.commons" % "commons-lang3" % "3.9",
-  "org.apache.commons" % "commons-text" % "1.7",
-  "commons-io" % "commons-io" % "2.6",
-  "com.ibm.icu" % "icu4j" % "66.1",
+  "org.scalatest"          %% "scalatest"               % "3.2.15" % "test",
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.13.0",
+  "com.typesafe"            % "config"                  % "1.3.3",
+  "org.apache.commons"      % "commons-lang3"           % "3.9",
+  "org.apache.commons"      % "commons-text"            % "1.7",
+  "commons-io"              % "commons-io"              % "2.6",
+  "com.ibm.icu"             % "icu4j"                   % "66.1"
 )
 
 
@@ -60,11 +80,11 @@ git.remoteRepo := "git@github.com:lum-ai/common.git"
 
 // Publishing settings
 
-publishTo := sonatypePublishToBundle.value
+publishTo := Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
 
 publishMavenStyle := true
 
-publishArtifact in Test := false
+Test / publishArtifact := false
 
 licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 

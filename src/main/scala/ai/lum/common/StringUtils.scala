@@ -16,7 +16,7 @@
 
 package ai.lum.common
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuilder
 import org.apache.commons.lang3.{ StringUtils => ApacheStringUtils }
 import org.apache.commons.text.WordUtils
@@ -266,14 +266,14 @@ object StringUtils {
       var result = str
       // replace chars pre normalization
       for ((k,v) <- preMapping) {
-        result = result.replaceAllLiterally(k, v)
+        result = result.replace(k, v)
       }
       // normalize
       val normalizer = if (casefold) Normalizer2.getNFKCCasefoldInstance() else Normalizer2.getNFKCInstance()
       result = normalizer.normalize(result)
       // replace chars post normalization
       for ((k,v) <- postMapping) {
-        result = result.replaceAllLiterally(k, normalizer.normalize(v))
+        result = result.replace(k, normalizer.normalize(v))
       }
       // remove diacritics
       if (removeDiacritics) {

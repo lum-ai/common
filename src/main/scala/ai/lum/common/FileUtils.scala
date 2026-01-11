@@ -114,7 +114,7 @@ object FileUtils {
     def toOutputStream: BufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))
 
     def readString(charset: Charset = UTF_8, gzipSupport: Boolean = true): String = {
-      if (gzipSupport && getExtension.equalsIgnoreCase("gz")) {
+      if (gzipSupport && getExtension().equalsIgnoreCase("gz")) {
         using (new FileInputStream(file)) { fis =>
           using (new BufferedInputStream(fis)) { bis =>
             using (new GZIPInputStream(bis)) { gzis =>
@@ -128,7 +128,7 @@ object FileUtils {
     }
 
     def readByteArray(gzipSupport: Boolean = true): Array[Byte] = {
-      if (gzipSupport && getExtension.equalsIgnoreCase("gz")) {
+      if (gzipSupport && getExtension().equalsIgnoreCase("gz")) {
         using (new FileInputStream(file)) { fis =>
           using (new BufferedInputStream(fis)) { bis =>
             using (new GZIPInputStream(bis)) { gzis =>
@@ -142,7 +142,7 @@ object FileUtils {
     }
 
     def writeString(string: String, charset: Charset = UTF_8, append: Boolean = false, gzipSupport: Boolean = true): Unit = {
-      if (gzipSupport && getExtension.equalsIgnoreCase("gz")) {
+      if (gzipSupport && getExtension().equalsIgnoreCase("gz")) {
         using (new FileOutputStream(file, append)) { fos =>
           using (new BufferedOutputStream(fos)) { bos =>
             using (new GZIPOutputStream(bos)) { gzos =>
@@ -156,7 +156,7 @@ object FileUtils {
     }
 
     def writeByteArray(bytes: Array[Byte], append: Boolean = false, gzipSupport: Boolean = true): Unit = {
-      if (gzipSupport && getExtension.equalsIgnoreCase("gz")) {
+      if (gzipSupport && getExtension().equalsIgnoreCase("gz")) {
          using (new FileOutputStream(file, append)) { fos =>
           using (new BufferedOutputStream(fos)) { bos =>
             using (new GZIPOutputStream(bos)) { gzos =>

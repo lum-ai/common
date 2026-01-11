@@ -21,7 +21,7 @@ import java.time.Duration
 import java.net.{ URI, URL }
 import java.nio.charset.Charset
 import java.nio.file.{ Path, Paths }
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import com.typesafe.config._
 
 object ConfigUtils {
