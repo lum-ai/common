@@ -7,17 +7,22 @@ organization := "ai.lum"
 val scala211 = "2.11.12" // up to 2.11.12
 val scala212 = "2.12.21" // up to 2.12.21
 val scala213 = "2.13.17" // up to 2.13.17
-val scala30  = "3.0.2"   // up to 3.0.2
 val scala31  = "3.1.3"   // up to 3.1.3
-val scala32  = "3.2.2"   // up to 3.2.2
-val scala33  = "3.3.7"   // up to 3.3.17
-val scala3   = scala31
+val scala33  = "3.3.7"   // up to 3.3.7
+val scala3   = scala33
 
-ThisBuild / crossScalaVersions := Seq(scala212, scala211, scala213)
-// ThisBuild / scalaVersion := scala211
-ThisBuild / scalaVersion := scala212
+ThisBuild / crossScalaVersions := Seq(scala33, scala212, scala211, scala213)
+ThisBuild / scalaVersion := scala33
 
 scalacOptions ++= {
+  val deprecationOpt = CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, minor)) if minor < 13 => Some("-deprecation")
+    // This turns the deprecation warnings into informational messages, which
+    // prevents -Xfatal-warnings from failing the compilation for Scala 2.13+.
+    // Once cannot easily use @annotation.nowarn("cat=deprecation") in the code
+    // because then Scala 2.12 complains about the unnecessary annotation.
+    case _ => Some("-Wconf:cat=deprecation:info")
+  }
   val higherKindsOpt = CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, minor)) if minor < 13 => Some("-language:higherKinds")
     case _ => None
@@ -26,16 +31,18 @@ scalacOptions ++= {
     case Some((2, minor)) if minor < 13 => Some("-Xfuture")
     case _ => None
   }
+  val lintOpt = CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, minor)) => Some("-Xlint")
+    case _ => None
+  }
 
     Seq(
     "-encoding", "utf-8",
-    "-deprecation",
     "-explaintypes",
     "-feature",
     "-unchecked",
-    "-Xfatal-warnings",
-    "-Xlint"
-  ) ++ higherKindsOpt ++ futureOpt
+    "-Xfatal-warnings"
+  ) ++ deprecationOpt ++ higherKindsOpt ++ futureOpt ++ lintOpt
 }
 
 // the console can't really cope with some scalac flags

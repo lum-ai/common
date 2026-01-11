@@ -165,7 +165,7 @@ object RandomUtils {
     // This is the very most general case.
     def choice[A, CC[X] <: TraversableOnce[X]](xs: CC[A])(implicit cbf: CanBuildFrom[CC[A], A, CC[A]]): A = {
       require(xs.toIterator.nonEmpty, "collection is empty")
-      sampleWithoutReplacement(xs, 1).toIterator.next
+      sampleWithoutReplacement(xs, 1).toIterator.next()
     }
 
     // This is duplicated so that only a single sample method uses default arguments are required by the compiler.
