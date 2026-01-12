@@ -17,7 +17,7 @@ val scala36  = "3.6.4"   // up to 3.6.4
 val scala37  = "3.7.4"   // up to 3.7.4
 val scala3   = scala31
 
-ThisBuild / crossScalaVersions := Seq(scala212, scala211, scala213, scala31) // scala30, scala31, scala32, scala33, scala34, scala35, scala36, scala37)
+ThisBuild / crossScalaVersions := Seq(scala212, scala211, scala213, scala3) // scala30, scala31, scala32, scala33, scala34, scala35, scala36, scala37)
 ThisBuild / scalaVersion := scala212
 
 scalacOptions ++= {
