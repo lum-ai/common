@@ -352,12 +352,11 @@ object Interval {
     def write(interval: Interval): String = interval.toString
 
     def read(pickled: String): Interval = {
-      pickled match {
+      (pickled: @unchecked) match {
         case emptyRegex() => Interval.empty
         case singletonRegex(value) => Interval.singleton(value.toInt)
         case openIntervalRegex(a, b) => Interval.open(a.toInt, b.toInt)
         case closedIntervalRegex(a, b) => Interval.closed(a.toInt, b.toInt)
-        case _ => ???
       }
     }
   }
