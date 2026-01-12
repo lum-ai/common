@@ -17,29 +17,17 @@ val scala36  = "3.6.4"   // up to 3.6.4
 val scala37  = "3.7.4"   // up to 3.7.4
 val scala3   = scala31
 
-ThisBuild / crossScalaVersions := Seq(scala212, scala211, scala213, scala30, scala31, scala32, scala33, scala34, scala35, scala36, scala37)
+ThisBuild / crossScalaVersions := Seq(scala212, scala211, scala213, scala31) // scala30, scala31, scala32, scala33, scala34, scala35, scala36, scala37)
 ThisBuild / scalaVersion := scala212
 
 scalacOptions ++= {
-  val explainTypesOpt = CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, 11)) => None
-    case Some((2, 12)) => None
-    case Some((2, 13)) => None
-    case Some((3, 0)) => None
-    case Some((3, 1)) => None
-    case Some((3, 2)) => None
-    case _ => Some("-explainTypes")
-  }
   val deprecationOpt = CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, minor)) if minor < 13 => Some("-deprecation")
-    // This turns the deprecation warnings into informational messages, which
-    // prevents -Xfatal-warnings from failing the compilation for Scala 2.13+.
-    // Once cannot easily use @annotation.nowarn("cat=deprecation") in the code
-    // because then Scala 2.12 complains about the unnecessary annotation.
-    case Some((2, minor)) if minor >= 13 => Some("-Wconf:cat=deprecation:info")
-
-    case Some((3, minor)) if minor < 1 => None
-    case Some((3, minor)) if minor >= 1 => Some("-Wconf:cat=deprecation:info")
+    case Some((2, 11)) => None // Some("-deprecation")
+    case Some((2, 12)) => None // Some("-deprecation")
+    case Some((2, 13)) => Some("-Wconf:cat=deprecation:ws")
+    case Some((3, 0)) => None // Nothing works, so warnings will be displayed.
+    case Some((3, _)) => Some("-Wconf:cat=deprecation:silent")
+    case _ => ???
   }
   val higherKindsOpt = CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, minor)) if minor < 13 => Some("-language:higherKinds")
@@ -53,13 +41,19 @@ scalacOptions ++= {
     case Some((2, minor)) => Some("-Xlint")
     case _ => None
   }
+  val rewriteSeq = CrossVersion.partialVersion(scalaVersion.value) match {
+    // The rewrite is only needed once.
+    // case Some((3, 5)) => Seq("-rewrite", "-source", "3.4-migration") // good
+    case _ => Seq.empty
+  }
 
-    Seq(
+  Seq(
     "-encoding", "utf-8",
+//    "-explainTypes",
     "-feature",
     "-unchecked",
 //    "-Xfatal-warnings"
-  ) ++ explainTypesOpt ++ deprecationOpt ++ higherKindsOpt ++ futureOpt ++ lintOpt
+  ) ++ deprecationOpt ++ higherKindsOpt ++ futureOpt ++ lintOpt ++ rewriteSeq
 }
 
 // the console can't really cope with some scalac flags
@@ -99,9 +93,9 @@ releaseProcess := Seq[ReleaseStep](
 
 
 // scaladoc hosting
-//enablePlugins(SiteScaladocPlugin)
-//enablePlugins(GhpagesPlugin)
-//git.remoteRepo := "git@github.com:lum-ai/common.git"
+enablePlugins(SiteScaladocPlugin)
+enablePlugins(GhpagesPlugin)
+git.remoteRepo := "git@github.com:lum-ai/common.git"
 
 
 // Publishing settings

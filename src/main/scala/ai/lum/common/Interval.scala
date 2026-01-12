@@ -197,7 +197,7 @@ sealed class Interval private (val start: Int, val end: Int)
     */
   def distance(that: Interval): Int = {
     require(that != Interval.empty && this != Interval.empty, "empty interval")
-    if (this intersects that) {
+    if (this `intersects` that) {
       0
     } else {
       (this.min() max that.min()) - (this.max() min that.max())
@@ -213,7 +213,7 @@ sealed class Interval private (val start: Int, val end: Int)
     } else if (this == Interval.empty) {
       that
     } else {
-      require((this borders that) || (this intersects that), "intervals must border or intersect")
+      require((this `borders` that) || (this `intersects` that), "intervals must border or intersect")
       Interval.open(that.start min this.start, that.end max this.end)
     }
   }
@@ -364,7 +364,7 @@ object Interval {
 
   /** Create an open interval that includes all points between the two intervals. */
   def between(x: Interval, y: Interval): Interval = {
-    require(!(x intersects y), "intervals may not intersect")
+    require(!(x `intersects` y), "intervals may not intersect")
     Interval.open(x.end min y.end, x.start max y.start)
   }
 
@@ -396,7 +396,7 @@ object Interval {
   def union(col: Seq[Interval]): Interval = {
     val sorted = col.sorted
     try {
-      sorted.reduceLeft(_ union _)
+      sorted.reduceLeft(_ `union` _)
     } catch {
       case _: IllegalArgumentException =>
         throw new IllegalArgumentException("gap in intervals: " + sorted)
@@ -427,7 +427,7 @@ object Interval {
         val singleton = Interval.singleton(i)
         list match {
           case Nil => List(singleton)
-          case x :: xs if x borders i => (x union singleton) :: xs
+          case x :: xs if x `borders` i => (x `union` singleton) :: xs
           case xs => singleton :: xs
         }
     }.reverse
