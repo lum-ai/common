@@ -1,24 +1,17 @@
-import ReleaseTransformations._
-
-name := "common"
-
-organization := "ai.lum"
-
+// Latest version numbers were updated on 2026-04-24.
 val scala211 = "2.11.12" // up to 2.11.12
 val scala212 = "2.12.21" // up to 2.12.21
-val scala213 = "2.13.17" // up to 2.13.17
-val scala30  = "3.0.2"   // up to 3.0.2
-val scala31  = "3.1.3"   // up to 3.1.3, for maximum compatibility
-val scala32  = "3.2.2"   // up to 3.2.2
-val scala33  = "3.3.7"   // up to 3.3.7 (LTS)
-val scala34  = "3.4.3"   // up to 3.4.3
-val scala35  = "3.5.2"   // up to 3.5.2
-val scala36  = "3.6.4"   // up to 3.6.4
-val scala37  = "3.7.4"   // up to 3.7.4
+val scala213 = "2.13.18" // up to 2.13.18
+val scala31  = "3.1.3"   // up to 3.1.3
+// Only the LTS versions are listed next.
+val scala33  = "3.3.7"   // up to 3.3.7
 val scala3   = scala31
 
-ThisBuild / crossScalaVersions := Seq(scala212, scala211, scala213, scala3) // scala30, scala31, scala32, scala33, scala34, scala35, scala36, scala37)
+ThisBuild / crossScalaVersions := Seq(scala212, scala211, scala213, scala3)
 ThisBuild / scalaVersion := scala212
+ThisBuild / versionScheme := Some("early-semver")
+
+name := "common"
 
 scalacOptions ++= {
   val deprecationOpt = CrossVersion.partialVersion(scalaVersion.value) match {
@@ -74,43 +67,7 @@ libraryDependencies ++= Seq(
   "com.ibm.icu"             % "icu4j"                   % "66.1"
 )
 
-
-// release steps
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  releaseStepCommandAndRemaining("+publishSigned"),
-  releaseStepCommandAndRemaining("sonatypeBundleRelease"),
-  setNextVersion,
-  commitNextVersion,
-  pushChanges
-)
-
-
 // scaladoc hosting
 enablePlugins(SiteScaladocPlugin)
 enablePlugins(GhpagesPlugin)
 git.remoteRepo := "git@github.com:lum-ai/common.git"
-
-
-// Publishing settings
-
-publishTo := Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
-
-publishMavenStyle := true
-
-Test / publishArtifact := false
-
-licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
-
-import xerial.sbt.Sonatype._
-sonatypeProjectHosting := Some(GitHubHosting("lum-ai", "common", "marco@lum.ai"))
-
-developers := List(
-  Developer(id="marcovzla", name="Marco Antonio Valenzuela Escárcega", email="marco@lum.ai", url=url("https://lum.ai/"))
-)
