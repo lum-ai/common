@@ -4,9 +4,8 @@ import java.io.File
 import java.nio.file.Files
 
 import ai.lum.common.FileUtils._
-import org.scalatest._
 
-class TestFileUtils extends FlatSpec with Matchers {
+class TestFileUtils extends Test {
 
   "FileUtils" should "write a string to a file" in {
     val file = File.createTempFile("TestFileUtils", ".txt")
@@ -49,6 +48,8 @@ class TestFileUtils extends FlatSpec with Matchers {
     a [RuntimeException] shouldBe thrownBy(file.mkChild("child.txt"))
   }
 
+  def canonicalize(pathName: String): String = pathName.replace('\\', '/')
+
   it should "make a parallel file" in {
     val temp = Files.createTempDirectory("alpha").toFile.getAbsolutePath
     val a = new File(temp, "alpha")
@@ -57,9 +58,9 @@ class TestFileUtils extends FlatSpec with Matchers {
     Files.createDirectories(abc.toPath)
 
     val file = new File(abc, "test.txt")
-    file.getPath should endWith ("alpha/bravo/charlie/test.txt")
+    canonicalize(file.getPath) should endWith ("alpha/bravo/charlie/test.txt")
     val parallel = file.mkParallel("bravo", "delta")
-    parallel.getPath should endWith ("alpha/delta/charlie/test.txt")
+    canonicalize(parallel.getPath) should endWith ("alpha/delta/charlie/test.txt")
   }
 
   it should "not make a parallel file if there is nothing to replace" in {
@@ -70,7 +71,7 @@ class TestFileUtils extends FlatSpec with Matchers {
     Files.createDirectories(abc.toPath)
 
     val file = new File(abc, "test.txt")
-    file.getPath should endWith ("alpha/bravo/charlie/test.txt")
+    canonicalize(file.getPath) should endWith ("alpha/bravo/charlie/test.txt")
     an [RuntimeException] shouldBe thrownBy(file.mkParallel("foxtrot", "delta"))
   }
 }

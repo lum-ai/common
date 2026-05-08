@@ -1,10 +1,9 @@
 package ai.lum.common
 
-import org.scalatest._
 import StringUtils._
 import DisplayUtils._
 
-class TestStringUtils extends FlatSpec with Matchers {
+class TestStringUtils extends Test {
 
   "Unicode normalization" should "normalize unicode strings" in {
     val s1 = "caf\u00e9"

@@ -48,7 +48,6 @@ import scala.util.matching.Regex
 @SerialVersionUID(1L)
 sealed class Interval private (val start: Int, val end: Int)
     extends IndexedSeq[Int] with Ordered[Interval] with Serializable {
-  import Interval._
   require(start <= end, "start must be <= end: " + start + ">" + end)
 
   override def toString: String = "[" + start + ", " + end + ")"
@@ -95,7 +94,7 @@ sealed class Interval private (val start: Int, val end: Int)
     }
   }
 
-  override def seq: IndexedSeq[Int] = this
+  override def seq: Interval.this.type = this
 
   /** The length of the interval. */
   override def length: Int = end - start
@@ -113,7 +112,7 @@ sealed class Interval private (val start: Int, val end: Int)
     * @return  true if this interval borders the other interval
     */
   def borders(that: Interval): Boolean = {
-    if (this == empty || that == empty) {
+    if (this == Interval.empty || that == Interval.empty) {
       false
     } else {
       this.start == that.end || that.start == this.end
@@ -126,7 +125,7 @@ sealed class Interval private (val start: Int, val end: Int)
     * @return  true if this interval borders the point
     */
   def borders(that: Int): Boolean = {
-    if (this == empty) {
+    if (this == Interval.empty) {
       false
     } else {
       this.start - 1 == that || this.end == that
@@ -139,9 +138,9 @@ sealed class Interval private (val start: Int, val end: Int)
     * @return  true if `this` is a superset of `that`
     */
   def superset(that: Interval): Boolean = {
-    if (that == empty) {
+    if (that == Interval.empty) {
       true
-    } else if (this == empty) {
+    } else if (this == Interval.empty) {
       false
     } else {
       this.start <= that.start && this.end >= that.end
@@ -154,9 +153,9 @@ sealed class Interval private (val start: Int, val end: Int)
     * @return  true if `this` is a subset of `that`
     */
   def subset(that: Interval): Boolean = {
-    if (that == empty) {
+    if (that == Interval.empty) {
       false
-    } else if (this == empty) {
+    } else if (this == Interval.empty) {
       true
     } else {
       this.start >= that.start && this.end <= that.end
@@ -169,7 +168,7 @@ sealed class Interval private (val start: Int, val end: Int)
     * @return  true if `this` intersects `that`
     */
   def intersects(that: Interval): Boolean = {
-    if (this == empty || that == empty) {
+    if (this == Interval.empty || that == Interval.empty) {
       false
     } else if (this.start < that.start) {
       this.end > that.start
@@ -197,11 +196,11 @@ sealed class Interval private (val start: Int, val end: Int)
     * @return  the distance between two intervals.
     */
   def distance(that: Interval): Int = {
-    require(that != empty && this != empty, "empty interval")
-    if (this intersects that) {
+    require(that != Interval.empty && this != Interval.empty, "empty interval")
+    if (this `intersects` that) {
       0
     } else {
-      (this.min max that.min) - (this.max min that.max)
+      (this.min() max that.min()) - (this.max() min that.max())
     }
   }
 
@@ -209,12 +208,12 @@ sealed class Interval private (val start: Int, val end: Int)
     * The two intervals must border or intersect each other.
     */
   def union(that: Interval): Interval = {
-    if (that == empty) {
+    if (that == Interval.empty) {
       this
-    } else if (this == empty) {
+    } else if (this == Interval.empty) {
       that
     } else {
-      require((this borders that) || (this intersects that), "intervals must border or intersect")
+      require((this `borders` that) || (this `intersects` that), "intervals must border or intersect")
       Interval.open(that.start min this.start, that.end max this.end)
     }
   }
@@ -223,7 +222,7 @@ sealed class Interval private (val start: Int, val end: Int)
     * if they do not intersect.
     */
   def intersect(that: Interval): Interval = {
-    if (that == empty || this == empty) {
+    if (that == Interval.empty || this == Interval.empty) {
       Interval.empty
     } else {
       val start = this.start max that.start
@@ -245,14 +244,14 @@ sealed class Interval private (val start: Int, val end: Int)
   /** Returns true if this is left of that.
     */
   def leftOf(that: Interval): Boolean = {
-    require(that != empty && this != empty, "empty interval")
+    require(that != Interval.empty && this != Interval.empty, "empty interval")
     this.end <= that.start
   }
 
   /** Returns true if this is right of that.
     */
   def rightOf(that: Interval): Boolean = {
-    require(that != empty && this != empty, "empty interval")
+    require(that != Interval.empty && this != Interval.empty, "empty interval")
     this.start >= that.end
   }
 
@@ -261,9 +260,9 @@ sealed class Interval private (val start: Int, val end: Int)
     * based on the intervals' length.
     */
   def left(that: Interval): Interval = {
-    if (that == empty) {
+    if (that == Interval.empty) {
       this
-    } else if (this == empty) {
+    } else if (this == Interval.empty) {
       that
     } else if (that.start < this.start) {
       that
@@ -281,9 +280,9 @@ sealed class Interval private (val start: Int, val end: Int)
     * based on the intervals' length.
     */
   def right(that: Interval): Interval = {
-    if (that == empty) {
+    if (that == Interval.empty) {
       this
-    } else if (this == empty) {
+    } else if (this == Interval.empty) {
       that
     } else if (that.start > this.start) {
       that
@@ -297,14 +296,14 @@ sealed class Interval private (val start: Int, val end: Int)
   }
 
   /** The minimum index in the interval. */
-  def min: Int = {
-    require(this != empty, "empty interval")
+  def min(): Int = {
+    require(this != Interval.empty, "empty interval")
     start
   }
 
   /** The maximum index in the interval. */
-  def max: Int = {
-    require(this != empty, "empty interval")
+  def max(): Int = {
+    require(this != Interval.empty, "empty interval")
     end - 1
   }
 
@@ -353,7 +352,7 @@ object Interval {
     def write(interval: Interval): String = interval.toString
 
     def read(pickled: String): Interval = {
-      pickled match {
+      (pickled: @unchecked) match {
         case emptyRegex() => Interval.empty
         case singletonRegex(value) => Interval.singleton(value.toInt)
         case openIntervalRegex(a, b) => Interval.open(a.toInt, b.toInt)
@@ -364,7 +363,7 @@ object Interval {
 
   /** Create an open interval that includes all points between the two intervals. */
   def between(x: Interval, y: Interval): Interval = {
-    require(!(x intersects y), "intervals may not intersect")
+    require(!(x `intersects` y), "intervals may not intersect")
     Interval.open(x.end min y.end, x.start max y.start)
   }
 
@@ -396,7 +395,7 @@ object Interval {
   def union(col: Seq[Interval]): Interval = {
     val sorted = col.sorted
     try {
-      sorted.reduceLeft(_ union _)
+      sorted.reduceLeft(_ `union` _)
     } catch {
       case _: IllegalArgumentException =>
         throw new IllegalArgumentException("gap in intervals: " + sorted)
@@ -412,7 +411,7 @@ object Interval {
     if (col.isEmpty) {
       Interval.empty
     } else {
-      Interval.open(col.map(_.min).min, col.map(_.max).max + 1)
+      Interval.open(col.map(_.min()).min, col.map(_.max()).max + 1)
     }
   }
 
@@ -427,7 +426,7 @@ object Interval {
         val singleton = Interval.singleton(i)
         list match {
           case Nil => List(singleton)
-          case x :: xs if x borders i => (x union singleton) :: xs
+          case x :: xs if x `borders` i => (x `union` singleton) :: xs
           case xs => singleton :: xs
         }
     }.reverse
@@ -438,7 +437,7 @@ object Interval {
   object Open {
     /** Match exposing the bounds as an open interval */
     def unapply(interval: Interval): Option[(Int, Int)] = interval match {
-      case `empty` => None
+      case Empty => None
       case open: Interval => Some((open.start, open.end))
     }
   }
@@ -447,7 +446,7 @@ object Interval {
   object Empty extends Interval(0, 0) {
     override def toString: String = "{}"
     def unapply(interval: Interval): Option[Unit] = interval match {
-      case `empty` => Some(())
+      case Empty => Some(())
       case _ => None
     }
   }

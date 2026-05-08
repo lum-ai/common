@@ -1,8 +1,6 @@
 package ai.lum.common
 
-import org.scalatest._
-
-class TestInterval extends FlatSpec with Matchers {
+class TestInterval extends Test {
 
   behavior of "Interval"
 

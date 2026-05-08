@@ -19,7 +19,7 @@ package ai.lum.common
 import java.io.File
 import java.util.Properties
 import java.util.{ Map => JMap }
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import com.typesafe.config._
 import com.typesafe.config.{ ConfigFactory => TypesafeConfigFactory }
 import com.typesafe.config.impl.ConfigImpl
